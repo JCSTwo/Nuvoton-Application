@@ -311,7 +311,7 @@ void UsbCfg(void)
     /* Init the USB device address to 0x0 */
     outp32(&USBD->FADDR, 0x00);
     /* Init control end point */
-    USBD->STBUFSEG.STBUFSEG = 0x1F;                             /* Buffer for setup packet */
+    USBD->STBUFSEG = 0x1F << USBD_STBUFSEG_STBUFSEG_Pos;    /* Buffer for setup packet */
     _DRVUSB_SET_CFG_EP0(EPT_CFGP);                          /* Clear EP0 CTRL IN Ready Flag */
     _DRVUSB_SET_CFG(0, CFG0_SETTING);                       /* EP0 ==> control IN end point, address 0 */
     _DRVUSB_SET_EP_BUF(0, USB_SRAM_BASE + BUF0_SETTING);    /* Buffer for EP0 */
@@ -347,10 +347,9 @@ void UsbCfg(void)
 //======================================================
 void UsbFdt(void)
 {
-    uint8_t u8FLDET = USBD->FLDET.FLDET;
     _DRVUSB_SET_EVENT_FLAG(INTSTS_FLDET);
 
-    if (u8FLDET) {
+    if (USBD->FLDET & USBD_FLDET_FLDET_Msk) {
         /* USB Plug In */
         if (g_u8UsbState & USB_STATE_ATTACHED) {
             /* Do nothing if it is already attached */
@@ -1211,24 +1210,25 @@ void UsbUsb(uint32_t u32INTSTS)
 void udcFlashInit(void)
 {
     uint32_t u32StorageSize;
-    uint32_t u32Addr = 0x4000;
+    uint32_t u32Addr = 0x8000;
     F_DATA_FLASH_LUN = MassLUN;
     MassLUN++;
-    FMC->ISPCON.ISPEN = 1;
     outp32(FMC_ISPCMD, 0x00);   /* ISP Read */
-
     /* To check APROM Size */
-    while (1) {
-        outp32(FMC_ISPADR, u32Addr);
-        outp32(FMC_ISPTRG, 0x01);
-        __ISB();
+    outp32(FMC_ISPADR, 0x9000);
+    outp32(FMC_ISPTRG, 0x01);
+    __ISB();
 
-        if (FMC->ISPCON.ISPFF) {
-            FMC->ISPCON.ISPFF = 1;
-            break;
-        } else {
-            u32Addr <<= 1;
-        }
+    /* Check ISPFF flag to know whether erase OK or fail. */
+    if (FMC->ISPCON & FMC_ISPCON_ISPFF_Msk) {
+        FMC->ISPCON |= FMC_ISPCON_ISPFF_Msk;
+        u32Addr = 0x8000;
+    } else {
+        u32Addr <<= 1;
+    }
+
+    if (FMC->DFBADR < u32Addr) {
+        u32Addr = FMC->DFBADR;
     }
 
     //FMC->ISPCON.ISPEN = 0;

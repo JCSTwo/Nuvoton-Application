@@ -10,6 +10,7 @@
       <TargetName>Smpl_MassStorage_ISP</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060183::V5.06 update 2 (build 183)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>Cortex-M0</Device>
@@ -82,6 +83,8 @@
             <UserProg2Name>fromelf --text -c ".\obj\@L.axf" --output ".\obj\@L.txt"</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopA1X>0</nStopA1X>
+            <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>1</SelectedForBatchBuild>
           <SVCSIdString></SVCSIdString>
@@ -145,7 +148,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>15</TargetSelection>
+          <TargetSelection>18</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -169,7 +172,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4107</DriverSelection>
+            <DriverSelection>4106</DriverSelection>
           </Flash1>
           <bUseTDR>0</bUseTDR>
           <Flash2>Bin\Nu_Link.dll</Flash2>
@@ -225,6 +228,7 @@
             <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
+            <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
             <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
@@ -359,11 +363,17 @@
             <uSurpInc>0</uSurpInc>
             <uC99>0</uC99>
             <useXO>0</useXO>
+            <v6Lang>1</v6Lang>
+            <v6LangP>1</v6LangP>
+            <vShortEn>1</vShortEn>
+            <vShortWch>1</vShortWch>
+            <v6Lto>0</v6Lto>
+            <v6WtE>0</v6WtE>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define></Define>
+              <Define>__USBD_H__</Define>
               <Undefine></Undefine>
-              <IncludePath>.\;..\..\..\..\CMSIS\CM0\CoreSupport;..\..\..\..\CMSIS\CM0\DeviceSupport\Nuvoton\NUC1xx;..\..\..\Include;..\..\..\Include\Driver;..\..\..\Include\USB</IncludePath>
+              <IncludePath>.\;..\..\..\Include;..\..\..\Include\Driver;..\..\..\Include\USB;..\..\..\..\..\NUC123BSPv3\Library\CMSIS\Include;..\..\..\..\..\NUC123BSPv3\Library\Device\Nuvoton\NUC123\Include;..\..\..\..\..\NUC123BSPv3\Library\StdDriver\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -396,7 +406,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--map --first='startup_NUC1xx.o(RESET)' --datacompressor=off --info=inline --entry Reset_Handler</Misc>
+            <Misc>--map --first='startup_NUC123.o(RESET)' --datacompressor=off --info=inline --entry Reset_Handler</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -407,14 +417,14 @@
           <GroupName>CMSIS files</GroupName>
           <Files>
             <File>
-              <FileName>startup_NUC1xx.s</FileName>
+              <FileName>startup_NUC123.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\CMSIS\CM0\DeviceSupport\Nuvoton\NUC1xx\startup\arm\startup_NUC1xx.s</FilePath>
+              <FilePath>..\..\..\..\..\NUC123BSPv3\Library\Device\Nuvoton\NUC123\Source\ARM\startup_NUC123.s</FilePath>
             </File>
             <File>
-              <FileName>system_NUC1xx.c</FileName>
+              <FileName>system_NUC123.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\CMSIS\CM0\DeviceSupport\Nuvoton\NUC1xx\system_NUC1xx.c</FilePath>
+              <FilePath>..\..\..\..\..\NUC123BSPv3\Library\Device\Nuvoton\NUC123\Source\system_NUC123.c</FilePath>
             </File>
           </Files>
         </Group>

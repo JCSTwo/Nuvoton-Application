@@ -6,7 +6,7 @@
 #ifndef _DRVUSB_H
 #define _DRVUSB_H
 
-#include "NUC1xx.h"
+#include "NUC123.h"
 
 #ifdef __cplusplus
 extern "C"

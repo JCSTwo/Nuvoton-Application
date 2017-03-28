@@ -7,7 +7,7 @@
 #ifndef _NUC100_UDC_H_
 #define _NUC100_UDC_H_
 
-#include "NUC1xx.h"
+#include "NUC123.h"
 #include "Driver\DrvUSB.h"
 //======================================================
 

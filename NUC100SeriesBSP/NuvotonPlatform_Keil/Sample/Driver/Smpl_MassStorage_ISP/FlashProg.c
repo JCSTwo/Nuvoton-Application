@@ -8,7 +8,7 @@
 /* Includes of system headers                                                                              */
 /*---------------------------------------------------------------------------------------------------------*/
 #include "MassStorage_ISP.h"
-#include "NUC1xx.h"
+#include "NUC123.h"
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* Macro, type and constant definitions                                                                    */
@@ -66,15 +66,6 @@ void FMC_ReadPage(uint32_t u32startAddr, uint32_t *u32buff)
         }
     }
 }
-
-
-//void DataFlashRead(uint32_t addr, uint32_t buffer)
-//{
-/* This is low level read function of USB Mass Storage */
-
-//    FMC_ReadPage(addr, (uint32_t *)buffer);
-//}
-
 
 void myFMC_Write(uint32_t u32addr, uint32_t u32data)
 {
