@@ -98,29 +98,14 @@ void DataFlashWrite(uint32_t addr, uint32_t buffer)
 {
     /* This is low level write function of USB Mass Storage */
     if ((addr >= DATA_SECTOR_ADDRESS) && (addr < (DATA_SECTOR_ADDRESS + g_u32FlashSize))) {
-        //UNLOCKREG();
-        //FMC->ISPCON.ISPEN = 1;
         addr -= DATA_SECTOR_ADDRESS;
 
-        if (g_u8SecurityLockBit) {
-            myFMC_Erase(addr);
-            FMC_ProgramPage(addr, (uint32_t *) buffer);
-        }
-        /* For Security Lock */
-        else {
-            if (addr == 0) {
-                uint32_t i;
-
-                for (i = 0; i < g_u32FlashSize; i += FLASH_PAGE_SIZE) {
-                    myFMC_Erase(i);
-                }
-            }
-
-            FMC_ProgramPage(addr, (uint32_t *) buffer);
+        if ((FMC->ISPCON & FMC_ISPCON_BS_Msk) == 0) {
+            addr += FMC_LDROM_BASE;
         }
 
-        //FMC->ISPCON.ISPEN = 0;
-        //LOCKREG();
+        myFMC_Erase(addr);
+        FMC_ProgramPage(addr, (uint32_t *) buffer);
     }
 }
 

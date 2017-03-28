@@ -1213,22 +1213,27 @@ void udcFlashInit(void)
     uint32_t u32Addr = 0x8000;
     F_DATA_FLASH_LUN = MassLUN;
     MassLUN++;
-    outp32(FMC_ISPCMD, 0x00);   /* ISP Read */
-    /* To check APROM Size */
-    outp32(FMC_ISPADR, 0x9000);
-    outp32(FMC_ISPTRG, 0x01);
-    __ISB();
 
-    /* Check ISPFF flag to know whether erase OK or fail. */
-    if (FMC->ISPCON & FMC_ISPCON_ISPFF_Msk) {
-        FMC->ISPCON |= FMC_ISPCON_ISPFF_Msk;
-        u32Addr = 0x8000;
+    if (FMC->ISPCON & FMC_ISPCON_BS_Msk) {
+        outp32(FMC_ISPCMD, 0x00);   /* ISP Read */
+        /* To check APROM Size */
+        outp32(FMC_ISPADR, 0x9000);
+        outp32(FMC_ISPTRG, 0x01);
+        __ISB();
+
+        /* Check ISPFF flag to know whether erase OK or fail. */
+        if (FMC->ISPCON & FMC_ISPCON_ISPFF_Msk) {
+            FMC->ISPCON |= FMC_ISPCON_ISPFF_Msk;
+            u32Addr = 0x8000;
+        } else {
+            u32Addr <<= 1;
+        }
+
+        if (FMC->DFBADR < u32Addr) {
+            u32Addr = FMC->DFBADR;
+        }
     } else {
-        u32Addr <<= 1;
-    }
-
-    if (FMC->DFBADR < u32Addr) {
-        u32Addr = FMC->DFBADR;
+        u32Addr = FMC_LDROM_SIZE;
     }
 
     //FMC->ISPCON.ISPEN = 0;

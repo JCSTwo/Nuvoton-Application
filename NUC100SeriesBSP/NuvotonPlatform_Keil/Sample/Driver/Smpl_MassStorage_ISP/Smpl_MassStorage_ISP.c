@@ -12,15 +12,19 @@
  *----------------------------------------------------------------------------*/
 int32_t main(void)
 {
-    volatile uint32_t u32INTSTS;
+    volatile uint32_t u32INTSTS, u32BootAP;
     UNLOCKREG();
+    FMC->ISPCON |=  FMC_ISPCON_ISPEN_Msk | FMC_ISPCON_APUEN_Msk | FMC_ISPCON_LDUEN_Msk;
+    u32BootAP = (FMC->ISPCON & FMC_ISPCON_BS_Msk) ? 0 : 1;
+    PB->PMD = 0xFFFFFFFF;
+    PB13 = !u32BootAP;
+    PB14 = u32BootAP;
 
-    if (DetectPin) {
-        goto JMP_AP;
+    if ((u32BootAP == 0 &&  DetectPin != 0) || (u32BootAP != 0 &&  DetectPin == 0)) {
+        goto JMP_AP_LD;
     }
 
-//MSDISP:
-    FMC->ISPCON |=  FMC_ISPCON_ISPEN_Msk;
+// MSDISP:
     outpw(0x50000044, 0x0000000f); //for nuc1230 external rc pin enable
     /* Enable 12M Crystal */
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
@@ -58,7 +62,7 @@ int32_t main(void)
     /* Start USB Mass Storage */
 
     /* Handler the USB ISR by polling */
-    while (DetectPin == 0) {
+    while ((u32BootAP == 0 &&  DetectPin == 0) || (u32BootAP != 0 &&  DetectPin != 0)) {
         u32INTSTS = _DRVUSB_GET_EVENT_FLAG();
 
         if (u32INTSTS & INTSTS_FLDET) {
@@ -73,13 +77,21 @@ int32_t main(void)
         }
     }
 
-JMP_AP:
+JMP_AP_LD:
+    PB13 = 1;
+    PB14 = 1;
     outp32(0X50004040, 0xffffffff); //GPIO for QUASI MODE
     outp32(0X50004000, 0xffffffff); //
     outp32(0X50004080, 0xffffffff); //
     outp32(0X500040c0, 0xffffffff); //
     outpw(&SYS->RSTSRC, 3);//clear bit
-    outpw(&FMC->ISPCON, inpw(&FMC->ISPCON) & 0xFFFFFFFC);
+
+    if (u32BootAP) {
+        FMC_SET_LDROM_BOOT();
+    } else {
+        FMC_SET_APROM_BOOT();
+    }
+
     outpw(&SCB->AIRCR, 0x05FA0004);
 
     /* Trap the CPU */
