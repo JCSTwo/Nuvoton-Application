@@ -3,8 +3,6 @@
  * @brief
  *           Demonstrate how to implement a USB dual virtual COM port device.
  * @note
- *
- * Copyright (C) 2013 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NUC123.h"
@@ -13,9 +11,7 @@
 /*--------------------------------------------------------------------------*/
 STR_VCOM_LINE_CODING gLineCoding0 = {115200, 0, 0, 8};   /* Baud rate : 115200    */
 STR_VCOM_LINE_CODING gLineCoding1 = {115200, 0, 0, 8};   /* Baud rate : 115200    */
-/* Stop bit     */
-/* parity       */
-/* data bits    */
+
 uint16_t gCtrlSignal0 = 0;     /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Request To Send) */
 uint16_t gCtrlSignal1 = 0;     /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Request To Send) */
 
@@ -74,26 +70,31 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Enable Internal RC 22.1184 MHz clock */
-    CLK_EnableXtalRC(CLK_PWRCON_OSC22M_EN_Msk);
-    /* Waiting for Internal RC clock ready */
-    CLK_WaitClockReady(CLK_CLKSTATUS_OSC22M_STB_Msk);
-    /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
-    CLK_SetHCLK(CLK_CLKSEL0_HCLK_S_HIRC, CLK_CLKDIV_HCLK(1));
-    /* Enable external XTAL 12 MHz clock */
-    CLK_EnableXtalRC(CLK_PWRCON_XTL12M_EN_Msk);
-    /* Waiting for external XTAL clock ready */
-    CLK_WaitClockReady(CLK_CLKSTATUS_XTL12M_STB_Msk);
+    CLK->PWRCON |= (CLK_PWRCON_OSC22M_EN_Msk | CLK_PWRCON_XTL12M_EN_Msk);
+    while (!(CLK->CLKSTATUS & CLK_PWRCON_XTL12M_EN_Msk));
+    CLK->PLLCON = CLK_PLLCON_144MHz_HXT;
+    while (!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
+
     /* Set core clock */
-    CLK_SetCoreClock(72000000);
+    CLK->CLKDIV &= ~CLK_CLKDIV_HCLK_N_Msk;
+    CLK->CLKDIV |= CLK_CLKDIV_HCLK(2);
+    CLK->CLKDIV &= ~CLK_CLKDIV_USB_N_Msk;
+    CLK->CLKDIV |= CLK_CLKDIV_USB(3);
+    CLK->CLKSEL0 &= (~CLK_CLKSEL0_HCLK_S_Msk);
+    CLK->CLKSEL0 |= CLK_CLKSEL0_HCLK_S_PLL;
+
     /* Enable peripheral clock */
-    CLK_EnableModuleClock(UART0_MODULE);
-    CLK_EnableModuleClock(UART1_MODULE);
-    CLK_EnableModuleClock(USBD_MODULE);
-    /* Select peripheral clock source */
-    CLK_SetModuleClock(UART0_MODULE, CLK_CLKSEL1_UART_S_HXT, CLK_CLKDIV_UART(1));
-    CLK_SetModuleClock(UART1_MODULE, CLK_CLKSEL1_UART_S_HXT, CLK_CLKDIV_UART(1));
-    CLK_SetModuleClock(USBD_MODULE, 0, CLK_CLKDIV_USB(3));
+    CLK->APBCLK |= (CLK_APBCLK_UART0_EN_Msk | CLK_APBCLK_UART1_EN_Msk | CLK_APBCLK_USBD_EN_Msk);
+
+    PllClock        = 144000000;
+    SystemCoreClock = 144000000 / 2;
+    CyclesPerUs     = SystemCoreClock / 1000000;
+
+    /* Select UART module clock source */
+    CLK->CLKSEL1 &= ~CLK_CLKSEL1_UART_S_Msk;
+    CLK->CLKSEL1 |= CLK_CLKSEL1_UART_S_HXT;
+    CLK->CLKDIV &= ~CLK_CLKDIV_UART_N_Msk;
+    CLK->CLKDIV |= CLK_CLKDIV_UART(1);
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -422,13 +423,8 @@ int32_t main(void)
     NVIC_EnableIRQ(USBD_IRQn);
     NVIC_EnableIRQ(UART0_IRQn);
     NVIC_EnableIRQ(UART1_IRQn);
-
+    PB14 = 0; // Green LED ON
     while (1) {
         VCOM_TransferData();
     }
 }
-
-
-
-/*** (C) COPYRIGHT 2013 Nuvoton Technology Corp. ***/
-

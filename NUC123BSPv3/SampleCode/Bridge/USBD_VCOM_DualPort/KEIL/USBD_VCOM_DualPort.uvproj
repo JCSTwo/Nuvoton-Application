@@ -456,16 +456,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Library\StdDriver\src\usbd.c</FilePath>
             </File>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\src\sys.c</FilePath>
-            </File>
-            <File>
-              <FileName>clk.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\src\clk.c</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>

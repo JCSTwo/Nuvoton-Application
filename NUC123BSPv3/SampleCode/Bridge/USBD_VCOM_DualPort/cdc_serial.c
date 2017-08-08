@@ -326,7 +326,10 @@ void VCOM_LineCoding(uint8_t port)
         UART0->FCR = UART_FCR_TFR_Msk | UART_FCR_RFR_Msk;
         // Set baudrate, clock source and clock divider
         UART0->BAUD = 0x30000000 + ((u32SysTmp + gLineCoding0.u32DTERate / 2) / gLineCoding0.u32DTERate - 2);
-        CLK_SetModuleClock(UART0_MODULE, CLK_CLKSEL1_UART_S_PLL, CLK_CLKDIV_UART(u32Div + 1));
+        CLK->CLKSEL1 &= ~CLK_CLKSEL1_UART_S_Msk;
+        CLK->CLKSEL1 |= CLK_CLKSEL1_UART_S_PLL;
+        CLK->CLKDIV &= ~CLK_CLKDIV_UART_N_Msk;
+        CLK->CLKDIV |= CLK_CLKDIV_UART(u32Div + 1);
 
         // Set parity
         if (gLineCoding0.u8ParityType == 0) {
@@ -394,7 +397,10 @@ void VCOM_LineCoding(uint8_t port)
         UART1->FCR = UART_FCR_TFR_Msk | UART_FCR_RFR_Msk;
         // Set baudrate, clock source and clock divider
         UART1->BAUD = 0x30000000 + ((u32SysTmp + gLineCoding1.u32DTERate / 2) / gLineCoding1.u32DTERate - 2);
-        CLK_SetModuleClock(UART1_MODULE, CLK_CLKSEL1_UART_S_PLL, CLK_CLKDIV_UART(u32Div + 1));
+        CLK->CLKSEL1 &= ~CLK_CLKSEL1_UART_S_Msk;
+        CLK->CLKSEL1 |= CLK_CLKSEL1_UART_S_PLL;
+        CLK->CLKDIV &= ~CLK_CLKDIV_UART_N_Msk;
+        CLK->CLKDIV |= CLK_CLKDIV_UART(u32Div + 1);
 
         // Set parity
         if (gLineCoding1.u8ParityType == 0) {
