@@ -442,6 +442,7 @@ void SendChar_ToUART(int ch)
                 i32Head = i32Tmp;
             }
         }
+        return;
     }
     else
     {
@@ -454,14 +455,10 @@ void SendChar_ToUART(int ch)
     {
         i32Tmp = i32Tail + 1;
         if(i32Tmp >= BUF_SIZE) i32Tmp = 0;
-        
-        if((DEBUG_PORT->FSR & UART_FSR_TX_FULL_Msk) == 0)
-        {
-            DEBUG_PORT->DATA = u8Buf[i32Tail];
-            i32Tail = i32Tmp;
-        }
-        else
-            break; // FIFO full
+
+        while(DEBUG_PORT->FSR & UART_FSR_TX_FULL_Msk);
+        DEBUG_PORT->DATA = u8Buf[i32Tail];
+        i32Tail = i32Tmp;
     }while(i32Tail != i32Head);
 }
 
