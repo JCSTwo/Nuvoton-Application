@@ -1,12 +1,3 @@
-/******************************************************************************
- * @file     main.c
- * @brief
- *           Demonstrate how to transfer data between USB device and PC through USB HID interface.
- *           A windows tool is also included in this sample code to connect with USB device.
- *
- * @note
- * Copyright (C) 2014~2015 Nuvoton Technology Corp. All rights reserved.
- ******************************************************************************/
 #include <stdio.h>
 #include "NUC123.h"
 #include "hid_transfer.h"
@@ -65,8 +56,14 @@ void SYS_Init(void)
 /*---------------------------------------------------------------------------------------------------------*/
 int32_t main(void)
 {
+    volatile uint32_t u32BootAP;
     /* Unlock write-protected registers */
     SYS_UnlockReg();
+
+    u32BootAP = (FMC->ISPCON & FMC_ISPCON_BS_Msk) ? 0 : 1;
+    PB13 = u32BootAP;
+    PB14 = !u32BootAP;
+
     /* Init system and multi-funcition I/O */
     SYS_Init();
     /* Init UART for debug message */

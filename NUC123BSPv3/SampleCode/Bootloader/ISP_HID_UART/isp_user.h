@@ -4,8 +4,6 @@
 // Special Version for Nu-Bridge Only
 // 1. No Software protection & Security Lock protection
 // 2. To Entry ISP mode, user needs to tie PA13 to GND pin
-// 3. Do not support CMD_RUN_APROM, CMD_RUN_LDROM, CMD_RESET and CMD_DISCONNECT
-//    Disconnect PA13 and GND pin to jump to APROM
 
 #define FW_VERSION                  0x99
 
@@ -17,6 +15,9 @@
 #define CMD_ERASE_ALL               0x000000A3
 #define CMD_SYNC_PACKNO             0x000000A4
 #define CMD_GET_FWVER               0x000000A6
+#define CMD_RUN_APROM               0x000000AB
+#define CMD_RUN_LDROM               0x000000AC
+#define CMD_RESET                   0x000000AD
 #define CMD_CONNECT                 0x000000AE
 #define CMD_DISCONNECT              0x000000AF
 #define CMD_GET_DEVICEID            0x000000B1

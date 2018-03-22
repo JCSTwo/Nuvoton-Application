@@ -50,7 +50,7 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
     static uint32_t StartAddress, StartAddress_bak, TotalLen, TotalLen_bak, LastDataLen, g_packno = 1;
     uint8_t *response;
     uint16_t lcksum;
-    uint32_t lcmd, srclen, regcnf0;
+    uint32_t lcmd, srclen, i, regcnf0;
     unsigned char *pSrc;
     static uint32_t gcmd;
     response = response_buff;
@@ -76,6 +76,24 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
     } else if (lcmd == CMD_GET_DEVICEID) {
         outpw(response + 8, SYS->PDID);
         goto out;
+    } else if (lcmd == CMD_RUN_APROM || lcmd == CMD_RUN_LDROM || lcmd == CMD_RESET) {
+        outpw(&SYS->RSTSRC, 3);//clear bit
+
+        /* Set BS */
+        if (lcmd == CMD_RUN_APROM) {
+            i = (FMC->ISPCON & 0xFFFFFFFC);
+        } else if (lcmd == CMD_RUN_LDROM) {
+            i = (FMC->ISPCON & 0xFFFFFFFC);
+            i |= 0x00000002;
+        } else {
+            i = (FMC->ISPCON & 0xFFFFFFFE);//ISP disable
+        }
+
+        outpw(&FMC->ISPCON, i);
+        outpw(&SCB->AIRCR, (V6M_AIRCR_VECTKEY_DATA | V6M_AIRCR_SYSRESETREQ));
+
+        /* Trap the CPU */
+        while (1);
     } else if (lcmd == CMD_CONNECT) {
         g_packno = 1;
         goto out;
