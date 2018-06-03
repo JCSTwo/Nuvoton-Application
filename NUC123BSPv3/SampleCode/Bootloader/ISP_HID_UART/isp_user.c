@@ -1,12 +1,3 @@
-/******************************************************************************
- * @file     isp_user.c
- * @brief    ISP Command source file
- * @version  0x99
- * @date     23, March, 2017
- *
- * @note
- * Copyright (C) 2016-2017 Nuvoton Technology Corp. All rights reserved.
- ******************************************************************************/
 #include <stdio.h>
 #include "string.h"
 #include "isp_user.h"
@@ -27,6 +18,7 @@ static uint16_t Checksum(unsigned char *buf, int len)
     return (c);
 }
 
+#if 0
 static uint16_t CalCheckSum(uint32_t start, uint32_t len)
 {
     int i;
@@ -44,13 +36,14 @@ static uint16_t CalCheckSum(uint32_t start, uint32_t len)
 
     return lcksum;
 }
+#endif
 
 int ParseCmd(unsigned char *buffer, uint8_t len)
 {
-    static uint32_t StartAddress, StartAddress_bak, TotalLen, TotalLen_bak, LastDataLen, g_packno = 1;
+    static uint32_t StartAddress, TotalLen, LastDataLen, g_packno = 1;
     uint8_t *response;
     uint16_t lcksum;
-    uint32_t lcmd, srclen, i, regcnf0;
+    uint32_t lcmd, srclen, i;
     unsigned char *pSrc;
     static uint32_t gcmd;
     response = response_buff;
@@ -61,7 +54,6 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
     pSrc += 8;
     srclen -= 8;
     ReadData(Config0, Config0 + 8, (uint32_t *)(response + 8)); //read config
-    regcnf0 = *(uint32_t *)(response + 8);
 
     if (lcmd == CMD_SYNC_PACKNO) {
         g_packno = inpw(pSrc);
@@ -72,7 +64,7 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
     }
 
     if (lcmd == CMD_GET_FWVER) {
-        response[8] = FW_VERSION;//version 2.3
+        response[8] = FW_VERSION;
     } else if (lcmd == CMD_GET_DEVICEID) {
         outpw(response + 8, SYS->PDID);
         goto out;
@@ -102,7 +94,6 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
 
         if (lcmd == CMD_ERASE_ALL) { //erase data flash
             EraseAP(g_dataFlashAddr, g_dataFlashAddr + g_dataFlashSize);
-            *(uint32_t *)(response + 8) = regcnf0 | 0x02;
             UpdateConfig((uint32_t *)(response + 8), NULL);
         }
     }
@@ -117,20 +108,18 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
                 goto out;
             }
         } else {
-            StartAddress = 0;
+            StartAddress = FMC_APROM_BASE;
         }
 
         //StartAddress = inpw(pSrc);
         TotalLen = inpw(pSrc + 4);
         pSrc += 8;
         srclen -= 8;
-        StartAddress_bak = StartAddress;
-        TotalLen_bak = TotalLen;
     } else if (lcmd == CMD_UPDATE_CONFIG) {
         UpdateConfig((uint32_t *)(pSrc), (uint32_t *)(response + 8));
         GetDataFlashInfo(&g_dataFlashAddr, &g_dataFlashSize);
         goto out;
-    } else if (lcmd == CMD_RESEND_PACKET) { //for APROM&Data flash only
+    } else if (lcmd == CMD_RESEND_PACKET) {
         StartAddress -= LastDataLen;
         TotalLen += LastDataLen;
 
@@ -155,16 +144,11 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
         }
 
         TotalLen -= srclen;
-        WriteData(StartAddress, StartAddress + srclen, (uint32_t *)pSrc); //WriteData(StartAddress, StartAddress + srclen, (uint32_t*)pSrc);
+        WriteData(StartAddress, StartAddress + srclen, (uint32_t *)pSrc);
         memset(pSrc, 0, srclen);
         ReadData(StartAddress, StartAddress + srclen, (uint32_t *)pSrc);
         StartAddress += srclen;
         LastDataLen =  srclen;
-
-        if (TotalLen == 0) {
-            lcksum = CalCheckSum(StartAddress_bak, TotalLen_bak);
-            outps(response + 8, lcksum);
-        }
     }
 
 out:

@@ -7,7 +7,7 @@
 
 #define FW_VERSION                  0x99
 
-#include "FMC_USER.h"
+#include "fmc_user.h"
 
 #define CMD_UPDATE_APROM            0x000000A0
 #define CMD_UPDATE_CONFIG           0x000000A1
@@ -19,7 +19,6 @@
 #define CMD_RUN_LDROM               0x000000AC
 #define CMD_RESET                   0x000000AD
 #define CMD_CONNECT                 0x000000AE
-#define CMD_DISCONNECT              0x000000AF
 #define CMD_GET_DEVICEID            0x000000B1
 #define CMD_UPDATE_DATAFLASH        0x000000C3
 #define CMD_RESEND_PACKET           0x000000FF
