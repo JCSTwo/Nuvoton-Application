@@ -1,8 +1,14 @@
 #include <stdio.h>
 #include "NUC123.h"
 #include "usbd_transfer.h"
-#include "uart_transfer.h"
 #include "targetdev.h"
+
+/*--------------------------------------------------------------------------*/
+STR_VCOM_LINE_CODING gLineCoding = {115200, 0, 0, 8};   /* Baud rate : 115200    */
+/* Stop bit     */
+/* parity       */
+/* data bits    */
+uint16_t gCtrlSignal = 0;     /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Request To Send) */
 
 /*--------------------------------------------------------------------------*/
 void SYS_Init(void)
@@ -37,16 +43,8 @@ void SYS_Init(void)
     SystemCoreClock = 144000000 / 2;        // HCLK
     CyclesPerUs     = SystemCoreClock / 1000000;                   // For SYS_SysTickDelay()
     /* Enable module clock */
-    CLK->APBCLK |= (CLK_APBCLK_UART1_EN_Msk | CLK_APBCLK_USBD_EN_Msk);
+    CLK->APBCLK |= CLK_APBCLK_USBD_EN_Msk;
     CLK->AHBCLK |= CLK_AHBCLK_ISP_EN_Msk;   // (1ul << 2)
-    /* Select UART module clock source */
-    CLK->CLKSEL1 &= ~CLK_CLKSEL1_UART_S_Msk;
-    CLK->CLKSEL1 |= CLK_CLKSEL1_UART_S_HIRC;
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init I/O Multi-function                                                                                 */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Set GPB multi-function pins for UART1 RXD and TXD */
-    SYS->GPB_MFP |= (SYS_GPB_MFP_PB4_UART1_RXD | SYS_GPB_MFP_PB5_UART1_TXD);
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -64,10 +62,8 @@ int32_t main(void)
 
     /* Init system and multi-funcition I/O */
     SYS_Init();
-    /* Init UART for debug message */
-    UART_Init();
     FMC->ISPCON |= FMC_ISPCON_ISPEN_Msk;    // (1ul << 0)
-    GetDataFlashInfo(&g_dataFlashAddr , &g_dataFlashSize);
+    GetDataFlashInfo(&g_dataFlashAddr, &g_dataFlashSize);
 
     if (DetectPin) {
         goto _APROM;
@@ -82,16 +78,16 @@ int32_t main(void)
     NVIC_EnableIRQ(USBD_IRQn);
 
     while (DetectPin == 0) {
-        if (bUsbDataReady == TRUE) {
+        if (bVcomDataReady == TRUE) {
             ParseCmd((uint8_t *)usb_rcvbuf, EP3_MAX_PKT_SIZE);
             EP2_Handler();
-            bUsbDataReady = FALSE;
+            bVcomDataReady = FALSE;
         }
 
-        if (bUartDataReady == TRUE) {
-            ParseCmd((uint8_t *)uart_rcvbuf, 64);
-            PutString();
-            bUartDataReady = FALSE;
+        if (bHidDataReady == TRUE) {
+            ParseCmd((uint8_t *)usb_rcvbuf, 64);
+            EP7_Handler();
+            bHidDataReady = FALSE;
         }
     }
 

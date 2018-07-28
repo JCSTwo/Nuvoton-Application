@@ -1,13 +1,6 @@
-/******************************************************************************
- * @file     descriptors.c
- * @brief    NUC123 series USBD descriptor
- *
- * @note
- * Copyright (C) 2014~2015 Nuvoton Technology Corp. All rights reserved.
- ******************************************************************************/
 /*!<Includes */
 #include "NUC123.h"
-#include "hid_transfer.h"
+#include "usbd_transfer.h"
 
 /*!<USB HID Report Descriptor */
 const uint8_t HID_DeviceReportDescriptor[] = {
@@ -123,12 +116,10 @@ const uint8_t gu8VendorStringDesc[] = {
 
 /*!<USB Product String Descriptor */
 const uint8_t gu8ProductStringDesc[] = {
-    16,
+    24,
     DESC_STRING,
-    'N', 0, 'u', 0, 'c', 0, '-', 0, 'T', 0, 'W', 0, 'O', 0
+    'B', 0, 'L', 0, '-', 0, 'H', 0, 'I', 0, 'D', 0, '_', 0, 'U', 0, 'A', 0, 'R', 0, 'T', 0
 };
-
-
 
 const uint8_t gu8StringSerial[26] = {
     26,             // bLength
