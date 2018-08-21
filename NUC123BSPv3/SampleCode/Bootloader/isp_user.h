@@ -4,15 +4,17 @@
 // Special Version for Nu-Bridge Only
 // 1. No Software protection & Security Lock protection
 // 2. To Entry ISP mode, user needs to tie PA13 to GND pin
+// 3. DO NOT support CMD_ERASE_ALL
+// 4. Update internal flash using CMD_UPDATE_APROM or CMD_UPDATE_DATAFLASH
+//    - The flash size & address are specified by PC Tool (Only Support APROM & NVM)
+//    - Remove GetDataFlashInfo to reduce code size
 
-#define FW_VERSION                  0x99
+#define FW_VERSION                  0x9A
 
 #include "fmc_user.h"
 
 #define CMD_UPDATE_APROM            0x000000A0
 #define CMD_UPDATE_CONFIG           0x000000A1
-#define CMD_READ_CONFIG             0x000000A2
-#define CMD_ERASE_ALL               0x000000A3
 #define CMD_SYNC_PACKNO             0x000000A4
 #define CMD_GET_FWVER               0x000000A6
 #define CMD_RUN_APROM               0x000000AB
@@ -25,10 +27,7 @@
 #define V6M_AIRCR_VECTKEY_DATA      0x05FA0000UL
 #define V6M_AIRCR_SYSRESETREQ       0x00000004UL
 
-extern void GetDataFlashInfo(uint32_t *addr, uint32_t *size);
-extern uint32_t GetApromSize(void);
 extern int ParseCmd(unsigned char *buffer, uint8_t len);
-extern uint32_t g_apromSize, g_dataFlashAddr, g_dataFlashSize;
 
 extern __align(4) uint8_t usb_rcvbuf[];
 extern __align(4) uint8_t usb_sendbuf[];

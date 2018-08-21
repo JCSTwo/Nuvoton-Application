@@ -15,6 +15,7 @@ int FMC_Proc(unsigned int u32Cmd, unsigned int addr_start, unsigned int addr_end
 
         FMC->ISPTRG = 0x1;
         __ISB();
+
         while (FMC->ISPTRG);                /* Waiting for ISP Done */
 
         Reg = FMC->ISPCON;

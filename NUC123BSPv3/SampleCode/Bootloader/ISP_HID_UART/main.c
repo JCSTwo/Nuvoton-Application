@@ -52,22 +52,20 @@ void SYS_Init(void)
 /*---------------------------------------------------------------------------------------------------------*/
 /*  Main Function                                                                                          */
 /*---------------------------------------------------------------------------------------------------------*/
+void USBD_IRQHandler(void);
 int32_t main(void)
 {
     volatile uint32_t u32BootAP;
     /* Unlock protected registers */
     SYS_UnlockReg();
-
     u32BootAP = (FMC->ISPCON & FMC_ISPCON_BS_Msk) ? 0 : 1;
     PB13 = u32BootAP;
     PB14 = !u32BootAP;
-
     /* Init system and multi-funcition I/O */
     SYS_Init();
     /* Init UART for debug message */
     UART_Init();
-    FMC->ISPCON |= FMC_ISPCON_ISPEN_Msk;    // (1ul << 0)
-    GetDataFlashInfo(&g_dataFlashAddr , &g_dataFlashSize);
+    FMC->ISPCON |= (FMC_ISPCON_ISPEN_Msk | FMC_ISPCON_LDUEN_Msk | FMC_ISPCON_APUEN_Msk);
 
     if (DetectPin) {
         goto _APROM;
@@ -79,9 +77,11 @@ int32_t main(void)
     HID_Init();
     /* Start USB device */
     USBD_Start();
-    NVIC_EnableIRQ(USBD_IRQn);
+    // NVIC_EnableIRQ(USBD_IRQn);
 
     while (DetectPin == 0) {
+        USBD_IRQHandler();
+
         if (bUsbDataReady == TRUE) {
             ParseCmd((uint8_t *)usb_rcvbuf, EP3_MAX_PKT_SIZE);
             EP2_Handler();

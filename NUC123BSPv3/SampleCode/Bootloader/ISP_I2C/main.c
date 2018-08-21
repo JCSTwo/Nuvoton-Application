@@ -62,8 +62,7 @@ int32_t main(void)
     /* Init system and multi-funcition I/O */
     SYS_Init();
     I2C_Init();
-    FMC->ISPCON |= FMC_ISPCON_ISPEN_Msk;    // (1ul << 0)
-    GetDataFlashInfo(&g_dataFlashAddr, &g_dataFlashSize);
+    FMC->ISPCON |= (FMC_ISPCON_ISPEN_Msk | FMC_ISPCON_LDUEN_Msk | FMC_ISPCON_APUEN_Msk);
 
     while (DetectPin == 0) {
         I2C_SlaveRcvSendData();

@@ -3,9 +3,6 @@
 
 #include "targetdev.h"
 
-// #define FMC_CONFIG0_ADDR        (FMC_CONFIG_BASE)       /*!< CONFIG 0 Address */
-// #define FMC_CONFIG1_ADDR        (FMC_CONFIG_BASE + 4)   /*!< CONFIG 1 Address */
-
 #define Config0         FMC_CONFIG_BASE
 #define Config1         (FMC_CONFIG_BASE+4)
 
@@ -29,8 +26,6 @@ void ReadData(unsigned int addr_start, unsigned int addr_end, unsigned int *data
 void WriteData(unsigned int addr_start, unsigned int addr_end, unsigned int *data);
 void EraseAP(unsigned int addr_start, unsigned int addr_end);
 void UpdateConfig(unsigned int *data, unsigned int *res);
-
-void GetDataFlashInfo(uint32_t *addr, uint32_t *size);
 
 #endif
 

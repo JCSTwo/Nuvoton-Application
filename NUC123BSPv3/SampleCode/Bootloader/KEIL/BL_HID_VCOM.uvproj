@@ -172,7 +172,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4101</DriverSelection>
+            <DriverSelection>4106</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>Bin\Nu_Link.dll</Flash2>
@@ -437,11 +437,6 @@
               <FileName>isp_user.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\isp_user.c</FilePath>
-            </File>
-            <File>
-              <FileName>targetdev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\targetdev.c</FilePath>
             </File>
             <File>
               <FileName>descriptors.c</FileName>

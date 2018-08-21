@@ -272,7 +272,6 @@ void HID_ClassRequest(void)
                 /* Status stage */
                 USBD_SET_DATA1(EP0);
                 USBD_SET_PAYLOAD_LEN(EP0, 0);
-
                 break;
             }
 
