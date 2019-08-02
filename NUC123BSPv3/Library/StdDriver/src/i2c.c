@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     i2c.c
  * @version  V3.00
- * $Revision: 11 $
- * $Date: 16/06/22 11:45a $
+ * $Revision: 12 $
+ * $Date: 17/06/27 2:39p $
  * @brief    NUC123 series I2C driver source file
  *
  * @note
@@ -657,7 +657,7 @@ uint8_t I2C_WriteByteTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u16DataAd
                 break;
 
             case 0x18:                                                      /* Slave Address ACK */
-                I2C_SET_DATA(i2c, (uint8_t)(u16DataAddr & 0xFF00) >> 8);    /* Write Hi byte address of register */
+                I2C_SET_DATA(i2c, (uint8_t)((u16DataAddr & 0xFF00) >> 8));    /* Write Hi byte address of register */
                 break;
 
             case 0x20:                                                      /* Slave Address NACK */
@@ -725,7 +725,7 @@ uint32_t I2C_WriteMultiBytesTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u1
                 break;
 
             case 0x18:                                                      /* Slave Address ACK */
-                I2C_SET_DATA(i2c, (uint8_t)(u16DataAddr & 0xFF00) >> 8);    /* Write Hi byte address of register */
+                I2C_SET_DATA(i2c, (uint8_t)((u16DataAddr & 0xFF00) >> 8));    /* Write Hi byte address of register */
                 break;
 
             case 0x20:                                                      /* Slave Address NACK */
@@ -1081,7 +1081,7 @@ uint8_t I2C_ReadByteTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u16DataAdd
                 break;
 
             case 0x18:                                                      /* Slave Address ACK */
-                I2C_SET_DATA(i2c, (uint8_t)(u16DataAddr & 0xFF00) >> 8);    /* Write Hi byte address of register */
+                I2C_SET_DATA(i2c, (uint8_t)((u16DataAddr & 0xFF00) >> 8));    /* Write Hi byte address of register */
                 break;
 
             case 0x20:                                                      /* Slave Address NACK */
@@ -1168,7 +1168,7 @@ uint32_t I2C_ReadMultiBytesTwoRegs(I2C_T *i2c, uint8_t u8SlaveAddr, uint16_t u16
                 break;
 
             case 0x18:                                                      /* Slave Address ACK */
-                I2C_SET_DATA(i2c, (uint8_t)(u16DataAddr & 0xFF00) >> 8);    /* Write Hi byte address of register */
+                I2C_SET_DATA(i2c, (uint8_t)((u16DataAddr & 0xFF00) >> 8));    /* Write Hi byte address of register */
                 break;
 
             case 0x20:                                                      /* Slave Address NACK */

@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     NUC123.h
  * @version  V3.0
- * $Revision: 84 $
- * $Date: 16/06/22 8:25p $
+ * $Revision: 85 $
+ * $Date: 17/05/26 10:49a $
  * @brief    NUC123 Series Peripheral Access Layer Header File
  *
  * @note
@@ -5846,221 +5846,221 @@ typedef struct {
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[10:8]  |GPA10_MFP |PA.10 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = I2C1_SDA function is selected.
-     * |        |          |010 = SPI1_MISO0 function is selected.
-     * |        |          |011 = SPI2_MISO0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= I2C1_SDA function is selected.
+     * |        |          |010	= SPI1_MISO0 function is selected.
+     * |        |          |011	= SPI2_MISO0 function is selected.
      * |[14:12] |GPA11_MFP |PA.11 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = I2C1_SCL function is selected.
-     * |        |          |010 = SPI1_CLK function is selected.
-     * |        |          |011 = SPI2_MOSI0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= I2C1_SCL function is selected.
+     * |        |          |010	= SPI1_CLK function is selected.
+     * |        |          |011	= SPI2_MOSI0 function is selected.
      * |[18:16] |GPA12_MFP |PA.12 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = PWM0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= PWM0 function is selected.
      * |[22:20] |GPA13_MFP |PA.13 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = PWM1 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= PWM1 function is selected.
      * |[26:24] |GPA14_MFP |PA.14 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = PWM2 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= PWM2 function is selected.
      * |[30:28] |GPA15_MFP |PA.15 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = PWM3 function is selected.
-     * |        |          |010 = CLKO function is selected.
-     * |        |          |011 = I2S_MCLK function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= PWM3 function is selected.
+     * |        |          |010	= CLKO function is selected.
+     * |        |          |011	= I2S_MCLK function is selected.
      * @var GCR_T::GPB_MFPL
      * Offset: 0x138  GPIOB Multiple Function Low Byte Control Register (NUC123xxxAEx Only)
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[2:0]   |GPB0_MFP  |PB.0 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = UART0_RXD function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= UART0_RXD function is selected.
      * |[6:4]   |GPB1_MFP  |PB.1 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = UART0_TXD function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= UART0_TXD function is selected.
      * |[10:8]  |GPB2_MFP  |PB.2 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = UART0_nRTS function is selected.
-     * |        |          |010 = TM2_EXT function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= UART0_nRTS function is selected.
+     * |        |          |010	= TM2_EXT function is selected.
      * |[14:12] |GPB3_MFP  |PB.3 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = UART0_nCTS function is selected.
-     * |        |          |010 = TM3_EXT function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= UART0_nCTS function is selected.
+     * |        |          |010	= TM3_EXT function is selected.
      * |[18:16] |GPB4_MFP  |PB.4 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = UART1_RXD function is selected.
-     * |        |          |010 = SPI2_SS0 function is selected.
-     * |        |          |010 = SPI1_SS1 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= UART1_RXD function is selected.
+     * |        |          |010	= SPI2_SS0 function is selected.
+     * |        |          |010	= SPI1_SS1 function is selected.
      * |[22:20] |GPB5_MFP  |PB.5 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = UART1_TXD function is selected.
-     * |        |          |010 = SPI2_CLK function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= UART1_TXD function is selected.
+     * |        |          |010	= SPI2_CLK function is selected.
      * |[26:24] |GPB6_MFP  |PB.6 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = UART1_nRTS function is selected.
-     * |        |          |010 = SPI2_MOSI0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= UART1_nRTS function is selected.
+     * |        |          |010	= SPI2_MOSI0 function is selected.
      * |[30:28] |GPB7_MFP  |PB.7 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = UART1_nCTS function is selected.
-     * |        |          |010 = SPI2_MISO0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= UART1_nCTS function is selected.
+     * |        |          |010	= SPI2_MISO0 function is selected.
      * @var GCR_T::GPB_MFPH
      * Offset: 0x13C  GPIOB Multiple Function High Byte Control Register (NUC123xxxAEx Only)
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[2:0]   |GPB8_MFP  |PB.8 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = TM0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= TM0 function is selected.
      * |[6:4]   |GPB9_MFP  |PB.9 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = TM1 function is selected.
-     * |        |          |010 = SPI1_SS1 function is selected.
-     * |        |          |011 = PWM1 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= TM1 function is selected.
+     * |        |          |010	= SPI1_SS1 function is selected.
+     * |        |          |011	= PWM1 function is selected.
      * |[10:8]  |GPB10_MFP |PB.10 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = TM2 function is selected.
-     * |        |          |010 = SPI0_SS1 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= TM2 function is selected.
+     * |        |          |010	= SPI0_SS1 function is selected.
      * |[18:16] |GPB12_MFP |PB.12 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI1_SS0 function is selected.
-     * |        |          |010 = CLKO function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI1_SS0 function is selected.
+     * |        |          |010	= CLKO function is selected.
      * |[22:20] |GPB13_MFP |PB.13 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
+     * |        |          |000	= GPIO function is selected.
      * |[26:24] |GPB14_MFP |PB.14 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = INT0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= INT0 function is selected.
      * |[30:28] |GPB15_MFP |PB.15 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = INT1 function is selected.
-     * |        |          |010 = TM0_EXT function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= INT1 function is selected.
+     * |        |          |010	= TM0_EXT function is selected.
      * @var GCR_T::GPC_MFPL
      * Offset: 0x140  GPIOC Multiple Function Low Byte Control Register (NUC123xxxAEx Only)
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[2:0]   |GPC0_MFP  |PC.0 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI0_SS0 function is selected.
-     * |        |          |010 = I2S_LRCK function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI0_SS0 function is selected.
+     * |        |          |010	= I2S_LRCK function is selected.
      * |[6:4]   |GPC1_MFP  |PC.1 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI0_CLK function is selected.
-     * |        |          |001 = I2S_BCLK function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI0_CLK function is selected.
+     * |        |          |001	= I2S_BCLK function is selected.
      * |[10:8]  |GPC2_MFP  |PC.2 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI0_MISO0 function is selected.
-     * |        |          |010 = I2S_DI function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI0_MISO0 function is selected.
+     * |        |          |010	= I2S_DI function is selected.
      * |[14:12] |GPC3_MFP  |PC.3 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI0_MIOSI0 function is selected.
-     * |        |          |010 = I2S_DO function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI0_MIOSI0 function is selected.
+     * |        |          |010	= I2S_DO function is selected.
      * |[18:16] |GPC4_MFP  |PC.4 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI0_MISO1 function is selected.
-     * |        |          |010 = UART0_RXD function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI0_MISO1 function is selected.
+     * |        |          |010	= UART0_RXD function is selected.
      * |[22:20] |GPC5_MFP  |PC.5 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI0_MOSI1 function is selected.
-     * |        |          |010 = UART0_TXD function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI0_MOSI1 function is selected.
+     * |        |          |010	= UART0_TXD function is selected.
      * @var GCR_T::GPC_MFPH
      * Offset: 0x144  GPIOC Multiple Function High Byte Control Register (NUC123xxxAEx Only)
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[2:0]   |GPC8_MFP  |PC.8 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI1_SS0 function is selected.
-     * |        |          |010 = PWM0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI1_SS0 function is selected.
+     * |        |          |010	= PWM0 function is selected.
      * |[6:4]   |GPC9_MFP  |PC.9 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI1_CLK function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI1_CLK function is selected.
      * |[10:8]  |GPC10_MFP |PC.10 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI1_MISO0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI1_MISO0 function is selected.
      * |[14:12] |GPC11_MFP |PC.11 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI1_MOSI0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI1_MOSI0 function is selected.
      * |[18:16] |GPC12_MFP |PC.12 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI1_MISO1 function is selected.
-     * |        |          |010 = I2S_MCLK function is selected.
-     * |        |          |011 = PWM2 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI1_MISO1 function is selected.
+     * |        |          |010	= I2S_MCLK function is selected.
+     * |        |          |011	= PWM2 function is selected.
      * |[22:20] |GPC13_MFP |PC.13 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI1_MOSI1 function is selected.
-     * |        |          |010 = CLKO function is selected.
-     * |        |          |011 = PWM3 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI1_MOSI1 function is selected.
+     * |        |          |010	= CLKO function is selected.
+     * |        |          |011	= PWM3 function is selected.
      * @var GCR_T::GPD_MFPL
      * Offset: 0x148  GPIOD Multiple Function Low Byte Control Register (NUC123xxxAEx Only)
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[2:0]   |GPD0_MFP  |PD.0 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI2_SS0 function is selected.
-     * |        |          |010 = ADC0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI2_SS0 function is selected.
+     * |        |          |010	= ADC0 function is selected.
      * |[6:4]   |GPD1_MFP  |PD.1 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI0_SS1 function is selected.
-     * |        |          |010 = SPI2_CLK function is selected.
-     * |        |          |011 = ADC1 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI0_SS1 function is selected.
+     * |        |          |010	= SPI2_CLK function is selected.
+     * |        |          |011	= ADC1 function is selected.
      * |[10:8]  |GPD2_MFP  |PD.2 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI0_MISO1 function is selected.
-     * |        |          |010 = SPI2_MISO0 function is selected.
-     * |        |          |010 = ADC2 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI0_MISO1 function is selected.
+     * |        |          |010	= SPI2_MISO0 function is selected.
+     * |        |          |010	= ADC2 function is selected.
      * |[14:12] |GPD3_MFP  |PD.3 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI0_MOSI1 function is selected.
-     * |        |          |010 = SPI2_MOSI0 function is selected.
-     * |        |          |011 = ADC3 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI0_MOSI1 function is selected.
+     * |        |          |010	= SPI2_MOSI0 function is selected.
+     * |        |          |011	= ADC3 function is selected.
      * |[18:16] |GPD4_MFP  |PD.4 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI2_MISO1 function is selected.
-     * |        |          |010 = ADC4 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI2_MISO1 function is selected.
+     * |        |          |010	= ADC4 function is selected.
      * |[22:20] |GPD5_MFP  |PD.5 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI2_MOSI1 function is selected.
-     * |        |          |010 = ADC5 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI2_MOSI1 function is selected.
+     * |        |          |010	= ADC5 function is selected.
      * @var GCR_T::GPD_MFPH
      * Offset: 0x14C  GPIOD Multiple Function High Byte Control Register (NUC123xxxAEx Only)
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[2:0]   |GPD8_MFP  |PD.8 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = SPI1_MOSI0 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= SPI1_MOSI0 function is selected.
      * |[6:4]   |GPD9_MFP  |PD.9 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
+     * |        |          |000	= GPIO function is selected.
      * |[10:8]  |GPD10_MFP |PD.10 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = CLKO function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= CLKO function is selected.
      * |[14:12] |GPD11_MFP |PD.11 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = INT1 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= INT1 function is selected.
      * @var GCR_T::GPF_MFPL
      * Offset: 0x158  GPIOF Multiple Function Low Byte Control Register (NUC123xxxAEx Only)
      * ---------------------------------------------------------------------------------------------------
      * |Bits    |Field     |Descriptions
      * | :----: | :----:   | :---- |
      * |[2:0]   |GPF0_MFP  |PF.0 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = XT1_OUT function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= XT1_OUT function is selected.
      * |[6:4]   |GPF1_MFP  |PF.1 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = XT1_IN function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= XT1_IN function is selected.
      * |[10:8]  |GPF2_MFP  |PF.2 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = PS2_DAT function is selected.
-     * |        |          |010 = I2C0_SDA function is selected.
-     * |        |          |010 = ADC6 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= PS2_DAT function is selected.
+     * |        |          |010	= I2C0_SDA function is selected.
+     * |        |          |010	= ADC6 function is selected.
      * |[14:12] |GPF3_MFP  |PF.3 Pin Function Selection
-     * |        |          |000 = GPIO function is selected.
-     * |        |          |001 = PS2_CLK function is selected.
-     * |        |          |010 = I2C0_SCL function is selected.
-     * |        |          |011 = ADC7 function is selected.
+     * |        |          |000	= GPIO function is selected.
+     * |        |          |001	= PS2_CLK function is selected.
+     * |        |          |010	= I2C0_SCL function is selected.
+     * |        |          |011	= ADC7 function is selected.
      */
 
     __I  uint32_t PDID;          /* Offset: 0x00  Part Device Identification Number Register                         */
@@ -7502,7 +7502,7 @@ typedef struct {
 #define UART_ISR_HW_BUF_ERR_IF_Msk  (1ul << UART_ISR_HW_BUF_ERR_IF_Pos)     /*!< UART_T::ISR: HW BUF_ERR_IF Mask         */
 
 #define UART_ISR_HW_TOUT_IF_Pos     20                                      /*!< UART_T::ISR: HW TOUT_IF Position        */
-#define UART_ISR_HW_TOUT_IF_Msk     (1ul << UART_ISR_HW_TOUT_IFF_Pos)       /*!< UART_T::ISR: HW TOUT_IF Mask            */
+#define UART_ISR_HW_TOUT_IF_Msk     (1ul << UART_ISR_HW_TOUT_IF_Pos)        /*!< UART_T::ISR: HW TOUT_IF Mask            */
 
 #define UART_ISR_HW_MODEM_IF_Pos    19                                      /*!< UART_T::ISR: HW MODEM_IF Position       */
 #define UART_ISR_HW_MODEM_IF_Msk    (1ul << UART_ISR_HW_MODEM_IF_Pos)       /*!< UART_T::ISR: HW MODEM_IF Mask           */
@@ -8717,23 +8717,23 @@ typedef volatile unsigned long  vu32;       ///< Define 32-bit unsigned volatile
 /******************************************************************************/
 /*                         Peripheral header files                            */
 /******************************************************************************/
-#include "SYS.h"
-#include "ADC.h"
-#include "FMC.h"
-#include "GPIO.h"
-#include "I2C.h"
-#include "PWM.h"
-#include "SPI.h"
-#include "TIMER.h"
-#include "WDT.h"
-#include "WWDT.h"
-#include "UART.h"
-#include "I2S.h"
-#include "USBD.h"
-#include "PDMA.h"
-#include "PS2.h"
-#include "CLK.h"
-#include "CRC.h"
+#include "sys.h"
+#include "adc.h"
+#include "fmc.h"
+#include "gpio.h"
+#include "i2c.h"
+#include "pwm.h"
+#include "spi.h"
+#include "timer.h"
+#include "wdt.h"
+#include "wwdt.h"
+#include "uart.h"
+#include "i2s.h"
+#include "usbd.h"
+#include "pdma.h"
+#include "ps2.h"
+#include "clk.h"
+#include "crc.h"
 #endif
 
 

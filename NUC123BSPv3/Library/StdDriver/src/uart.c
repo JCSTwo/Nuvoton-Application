@@ -37,7 +37,7 @@
  *
  *    @details      The function is used to clear UART specified interrupt flag.
  */
-void UART_ClearIntFlag(UART_T *uart , uint32_t u32InterruptFlag)
+void UART_ClearIntFlag(UART_T *uart, uint32_t u32InterruptFlag)
 {
     if (u32InterruptFlag & UART_ISR_RLS_INT_Msk) { /* clear Receive Line Status Interrupt */
         uart->FSR = UART_FSR_BIF_Msk | UART_FSR_FEF_Msk | UART_FSR_PEF_Msk;

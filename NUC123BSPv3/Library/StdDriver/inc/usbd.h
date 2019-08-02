@@ -13,17 +13,6 @@
 #ifndef __USBD_H__
 #define __USBD_H__
 
-/* Types */
-typedef char               S8;
-typedef unsigned char      U8;
-typedef short              S16;
-typedef unsigned short     U16;
-typedef int                S32;
-typedef unsigned int       U32;
-
-#include "usb_def.h"
-#include "usb_hid.h"
-
 
 /** @addtogroup Standard_Driver Standard Driver
   @{
