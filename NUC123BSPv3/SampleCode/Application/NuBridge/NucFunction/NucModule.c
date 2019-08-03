@@ -761,11 +761,11 @@ void Nuc_AutoVCOM(void)
 }
 
 
-extern USB_SETUP_PACKET g_usbd_SetupPacket;        /*!< Setup packet buffer */
+extern uint8_t g_usbd_SetupPacket[8];        /*!< Setup packet buffer */
 
 void USBD_VendorRequest()
 {
-    if (g_usbd_SetupPacket.bmRequestType.Dir) {
+    if (g_usbd_SetupPacket[0] & 0x80) {
         USBD_PrepareCtrlIn((uint8_t *)&g_tdsModeInfo, 64);
         USBD_PrepareCtrlOut(0, 0);
     } else {
