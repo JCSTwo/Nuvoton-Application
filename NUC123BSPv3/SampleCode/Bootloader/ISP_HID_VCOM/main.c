@@ -3,6 +3,7 @@
 #include "usbd_transfer.h"
 #include "targetdev.h"
 
+
 /*--------------------------------------------------------------------------*/
 STR_VCOM_LINE_CODING gLineCoding = {115200, 0, 0, 8};   /* Baud rate : 115200    */
 /* Stop bit     */
@@ -73,11 +74,10 @@ int32_t main(void)
     HID_Init();
     /* Start USB device */
     USBD_Start();
-    // NVIC_EnableIRQ(USBD_IRQn);
+    NVIC_EnableIRQ(USBD_IRQn);
 
     while (DetectPin == 0) {
-        USBD_IRQHandler();
-
+        // USBD_IRQHandler();
         if (bVcomDataReady == TRUE) {
             ParseCmd((uint8_t *)usb_rcvbuf, EP3_MAX_PKT_SIZE);
             EP2_Handler();

@@ -7,16 +7,16 @@
 
   <Targets>
     <Target>
-      <TargetName>BL_HID_UART</TargetName>
+      <TargetName>ISP_UART</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
           <Device>NUC123SD4AN0</Device>
           <Vendor>Nuvoton</Vendor>
-          <Cpu>IRAM(0x20000000-0x20003FFF) IROM(0-0x1FFFF) CLOCK(50000000) CPUTYPE("Cortex-M0")</Cpu>
+          <Cpu>IRAM(0x20000000-0x20004FFF) IROM(0-0x10FFF) CLOCK(50000000) CPUTYPE("Cortex-M0")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>undefined</StartupFile>
+          <StartupFile>"Startup\Nuvoton\NUC1XX\startup_NUC1xx.s" ("Nuvoton NUC1XX Startup Code")</StartupFile>
           <FlashDriverDll></FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile></RegisterFile>
@@ -35,8 +35,8 @@
           <BinPath></BinPath>
           <IncludePath></IncludePath>
           <LibPath></LibPath>
-          <RegisterFilePath>?ST\STM32F10x\</RegisterFilePath>
-          <DBRegisterFilePath>?ST\STM32F10x\</DBRegisterFilePath>
+          <RegisterFilePath>Nuvoton\NUC123Series\</RegisterFilePath>
+          <DBRegisterFilePath>Nuvoton\NUC123Series\</DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -45,7 +45,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\obj\</OutputDirectory>
-          <OutputName>NUC123_BL_HID_UART</OutputName>
+          <OutputName>NUC123_BL_UART0_UART1</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -171,7 +171,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4106</DriverSelection>
+            <DriverSelection>4104</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>Bin\Nu_Link.dll</Flash2>
@@ -202,14 +202,14 @@
             <AdsANot>0</AdsANot>
             <AdsLLst>1</AdsLLst>
             <AdsLmap>1</AdsLmap>
-            <AdsLcgr>0</AdsLcgr>
-            <AdsLsym>0</AdsLsym>
+            <AdsLcgr>1</AdsLcgr>
+            <AdsLsym>1</AdsLsym>
             <AdsLszi>1</AdsLszi>
             <AdsLtoi>1</AdsLtoi>
-            <AdsLsun>0</AdsLsun>
-            <AdsLven>0</AdsLven>
-            <AdsLsxf>0</AdsLsxf>
-            <RvctClst>1</RvctClst>
+            <AdsLsun>1</AdsLsun>
+            <AdsLven>1</AdsLven>
+            <AdsLsxf>1</AdsLsxf>
+            <RvctClst>0</RvctClst>
             <GenPPlst>1</GenPPlst>
             <AdsCpuType>"Cortex-M0"</AdsCpuType>
             <RvctDeviceName></RvctDeviceName>
@@ -223,12 +223,12 @@
             <RvdsVP>0</RvdsVP>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
-            <StupSel>8</StupSel>
+            <StupSel>0</StupSel>
             <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
-            <RoSelD>3</RoSelD>
-            <RwSelD>3</RwSelD>
+            <RoSelD>0</RoSelD>
+            <RwSelD>5</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -239,12 +239,12 @@
             <Ro1Chk>0</Ro1Chk>
             <Ro2Chk>0</Ro2Chk>
             <Ro3Chk>0</Ro3Chk>
-            <Ir1Chk>1</Ir1Chk>
+            <Ir1Chk>0</Ir1Chk>
             <Ir2Chk>0</Ir2Chk>
             <Ra1Chk>0</Ra1Chk>
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
-            <Im1Chk>1</Im1Chk>
+            <Im1Chk>0</Im1Chk>
             <Im2Chk>0</Im2Chk>
             <OnChipMemories>
               <Ocm1>
@@ -280,12 +280,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x4000</Size>
+                <Size>0x5000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x11000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -310,7 +310,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x11000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -335,7 +335,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x4000</Size>
+                <Size>0x5000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -356,7 +356,7 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>0</wLevel>
+            <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
@@ -367,14 +367,14 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\Library\CMSIS\Include;..\..\..\Library\Device\Nuvoton\NUC123\Include;..\..\..\Library\StdDriver\inc;..\..\..\MyLibrary\HAL_Driver</IncludePath>
+              <IncludePath>..\;..\..\..\Library\Device\Nuvoton\NUC123\Include;..\..\..\Library\CMSIS\Include;..\..\..\Library\StdDriver\inc;..\..\..\MyLibrary\HAL_Driver</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
             <interw>1</interw>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <thumb>0</thumb>
+            <thumb>1</thumb>
             <SplitLS>0</SplitLS>
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
@@ -411,14 +411,14 @@
           <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>startup_NUC123.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\Library\Device\Nuvoton\NUC123\Source\ARM\startup_NUC123.s</FilePath>
-            </File>
-            <File>
               <FileName>system_NUC123.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Library\Device\Nuvoton\NUC123\Source\system_NUC123.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_NUC123.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\Library\Device\Nuvoton\NUC123\Source\ARM\startup_NUC123.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -436,36 +436,19 @@
               <FilePath>..\isp_user.c</FilePath>
             </File>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ISP_UART\main.c</FilePath>
+            </File>
+            <File>
               <FileName>uart_transfer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\uart_transfer.c</FilePath>
-            </File>
-            <File>
-              <FileName>descriptors.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\ISP_HID_UART\descriptors.c</FilePath>
-            </File>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\ISP_HID_UART\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>usbd_transfer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\ISP_HID_UART\usbd_transfer.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Library</GroupName>
-          <Files>
-            <File>
-              <FileName>usbd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Library\StdDriver\src\usbd.c</FilePath>
-            </File>
-          </Files>
         </Group>
       </Groups>
     </Target>

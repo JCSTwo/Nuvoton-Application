@@ -18,14 +18,12 @@
 /*-------------------------------------------------------------*/
 
 extern uint8_t  uart_rcvbuf[];
-extern uint8_t volatile bUartDataReady;
+extern uint32_t volatile bUartDataReady;
 extern uint8_t volatile bufhead;
 
 /*-------------------------------------------------------------*/
-void UART_Init(void);
-void UART0_IRQHandler(void);
-void PutString(void);
-uint32_t UART_IS_CONNECT(void);
+void UART_Init(UART_T *uart);
+void PutString(UART_T *uart);
 
 #endif  /* __UART_TRANS_H__ */
 

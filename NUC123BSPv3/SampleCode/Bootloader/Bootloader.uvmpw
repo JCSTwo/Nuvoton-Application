@@ -9,15 +9,19 @@
 
   <project>
     <PathAndName>.\KEIL\BL_HID_UART.uvproj</PathAndName>
-  </project>
-
-  <project>
-    <PathAndName>.\KEIL\BL_HID_VCOM.uvproj</PathAndName>
     <NodeIsActive>1</NodeIsActive>
   </project>
 
   <project>
+    <PathAndName>.\KEIL\BL_HID_VCOM.uvproj</PathAndName>
+  </project>
+
+  <project>
     <PathAndName>.\KEIL\BL_I2C.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>.\KEIL\BL_UART.uvproj</PathAndName>
   </project>
 
 </ProjectWorkspace>

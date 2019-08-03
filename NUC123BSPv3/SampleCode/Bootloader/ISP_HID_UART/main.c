@@ -64,7 +64,7 @@ int32_t main(void)
     /* Init system and multi-funcition I/O */
     SYS_Init();
     /* Init UART for debug message */
-    UART_Init();
+    UART_Init(UART1);
     FMC->ISPCON |= (FMC_ISPCON_ISPEN_Msk | FMC_ISPCON_LDUEN_Msk | FMC_ISPCON_APUEN_Msk);
 
     if (DetectPin) {
@@ -77,21 +77,19 @@ int32_t main(void)
     HID_Init();
     /* Start USB device */
     USBD_Start();
-    // NVIC_EnableIRQ(USBD_IRQn);
+    NVIC_EnableIRQ(USBD_IRQn);
 
     while (DetectPin == 0) {
-        USBD_IRQHandler();
-
         if (bUsbDataReady == TRUE) {
             ParseCmd((uint8_t *)usb_rcvbuf, EP3_MAX_PKT_SIZE);
             EP2_Handler();
             bUsbDataReady = FALSE;
         }
 
-        if (bUartDataReady == TRUE) {
+        if (bUartDataReady) {
             ParseCmd((uint8_t *)uart_rcvbuf, 64);
-            PutString();
-            bUartDataReady = FALSE;
+            PutString((UART_T *)bUartDataReady);
+            bUartDataReady = 0;
         }
     }
 

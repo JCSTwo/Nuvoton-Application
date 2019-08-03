@@ -3,7 +3,7 @@
 
 /* Define the vendor id and product id */
 #define USBD_VID        0x0416
-#define USBD_PID        0xDC00
+#define USBD_PID        0x3F00
 
 /*!<Define HID Class Specific Request */
 #define GET_REPORT          0x01
