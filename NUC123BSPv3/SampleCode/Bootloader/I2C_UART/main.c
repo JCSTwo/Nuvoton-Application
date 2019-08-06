@@ -26,12 +26,10 @@ int32_t main(void)
     u32BootAP = (FMC->ISPCON & FMC_ISPCON_BS_Msk) ? 0 : 1;
     PB13 = u32BootAP;
     PB14 = !u32BootAP;
-
     /* Init system and multi-funcition I/O */
     SYS_Init();
     UART_Init(UART1);
     I2C_Init(I2C0, 100000);
-
     FMC->ISPCON |= (FMC_ISPCON_ISPEN_Msk | FMC_ISPCON_LDUEN_Msk | FMC_ISPCON_APUEN_Msk);
 
     while (DetectPin == 0) {

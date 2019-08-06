@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>ISP_I2C</TargetName>
+      <TargetName>BL_I2C</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -367,7 +367,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\Library\Device\Nuvoton\NUC123\Include;..\..\..\Library\CMSIS\Include;..\..\..\Library\StdDriver\inc;..\..\..\MyLibrary\HAL_Driver</IncludePath>
+              <IncludePath>..\;..\..\..\Library\Device\Nuvoton\NUC123\Include;..\..\..\Library\CMSIS\Include;..\..\..\Library\StdDriver\inc;..\..\..\MyLibrary\HAL_Driver;..\..\..\MyLibrary\ISP_Driver</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -426,29 +426,31 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
-              <FileName>i2c_transfer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\i2c_transfer.c</FilePath>
-            </File>
-            <File>
-              <FileName>fmc_user.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\fmc_user.c</FilePath>
-            </File>
-            <File>
-              <FileName>isp_user.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\isp_user.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\ISP_I2C\main.c</FilePath>
+              <FilePath>..\I2C\main.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Library</GroupName>
+          <GroupName>MyLibrary</GroupName>
+          <Files>
+            <File>
+              <FileName>fmc_user.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\ISP_Driver\fmc_user.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_transfer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\ISP_Driver\i2c_transfer.c</FilePath>
+            </File>
+            <File>
+              <FileName>isp_user.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\ISP_Driver\isp_user.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>

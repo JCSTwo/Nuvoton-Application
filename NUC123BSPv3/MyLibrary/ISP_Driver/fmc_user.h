@@ -1,8 +1,6 @@
 #ifndef FMC_USER_H
 #define FMC_USER_H
 
-#include "targetdev.h"
-
 #define Config0         FMC_CONFIG_BASE
 #define Config1         (FMC_CONFIG_BASE+4)
 

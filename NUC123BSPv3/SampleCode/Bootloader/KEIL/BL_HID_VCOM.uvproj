@@ -45,7 +45,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\obj\</OutputDirectory>
-          <OutputName>NUC123_BL_HID_VCOM_PA13</OutputName>
+          <OutputName>NUC123_BL_HID_VCOM</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -367,7 +367,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\Library\CMSIS\Include;..\..\..\Library\Device\Nuvoton\NUC123\Include;..\..\..\Library\StdDriver\inc</IncludePath>
+              <IncludePath>..\;..\..\..\Library\CMSIS\Include;..\..\..\Library\Device\Nuvoton\NUC123\Include;..\..\..\Library\StdDriver\inc;..\..\..\MyLibrary\ISP_Driver</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -426,29 +426,19 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
-              <FileName>isp_user.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\isp_user.c</FilePath>
-            </File>
-            <File>
               <FileName>descriptors.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\ISP_HID_VCOM\descriptors.c</FilePath>
+              <FilePath>..\HID_VCOM\descriptors.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\ISP_HID_VCOM\main.c</FilePath>
+              <FilePath>..\HID_VCOM\main.c</FilePath>
             </File>
             <File>
               <FileName>usbd_transfer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\ISP_HID_VCOM\usbd_transfer.c</FilePath>
-            </File>
-            <File>
-              <FileName>fmc_user.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\fmc_user.c</FilePath>
+              <FilePath>..\HID_VCOM\usbd_transfer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -459,6 +449,21 @@
               <FileName>usbd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Library\StdDriver\src\usbd.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MyLibrary</GroupName>
+          <Files>
+            <File>
+              <FileName>fmc_user.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\ISP_Driver\fmc_user.c</FilePath>
+            </File>
+            <File>
+              <FileName>isp_user.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\ISP_Driver\isp_user.c</FilePath>
             </File>
           </Files>
         </Group>

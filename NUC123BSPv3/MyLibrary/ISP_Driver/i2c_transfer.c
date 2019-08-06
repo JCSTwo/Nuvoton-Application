@@ -1,5 +1,8 @@
 #include <stdio.h>
-#include "targetdev.h"
+#include "NUC123.h"
+
+extern __align(4) uint8_t response_buff[64];
+
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* Global variables                                                                                        */

@@ -21,11 +21,11 @@
   </project>
 
   <project>
-    <PathAndName>.\KEIL\BL_UART.uvproj</PathAndName>
+    <PathAndName>.\KEIL\BL_I2C_UART.uvproj</PathAndName>
   </project>
 
   <project>
-    <PathAndName>.\KEIL\BL_I2C_UART.uvproj</PathAndName>
+    <PathAndName>.\KEIL\BL_UART.uvproj</PathAndName>
   </project>
 
 </ProjectWorkspace>
