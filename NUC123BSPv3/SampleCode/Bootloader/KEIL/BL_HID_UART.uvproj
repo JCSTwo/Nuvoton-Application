@@ -367,7 +367,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\Library\CMSIS\Include;..\..\..\Library\Device\Nuvoton\NUC123\Include;..\..\..\Library\StdDriver\inc;..\..\..\MyLibrary\HAL_Driver;..\..\..\MyLibrary\ISP_Driver</IncludePath>
+              <IncludePath>..\;..\..\..\Library\CMSIS\Include;..\..\..\Library\Device\Nuvoton\NUC123\Include;..\..\..\Library\StdDriver\inc;..\..\..\MyLibrary\ISP_Driver</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

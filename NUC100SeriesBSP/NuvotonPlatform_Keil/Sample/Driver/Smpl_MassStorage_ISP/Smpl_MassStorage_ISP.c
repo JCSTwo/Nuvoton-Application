@@ -17,8 +17,8 @@ int32_t main(void)
     FMC->ISPCON |=  FMC_ISPCON_ISPEN_Msk | FMC_ISPCON_APUEN_Msk | FMC_ISPCON_LDUEN_Msk;
     u32BootAP = (FMC->ISPCON & FMC_ISPCON_BS_Msk) ? 0 : 1;
     PB->PMD = 0xFFFFFFFF;
-    PB13 = !u32BootAP;
-    PB14 = u32BootAP;
+    PB13 = u32BootAP;
+    PB14 = !u32BootAP;
 
     if ((u32BootAP == 0 &&  DetectPin != 0) || (u32BootAP != 0 &&  DetectPin == 0)) {
         goto JMP_AP_LD;

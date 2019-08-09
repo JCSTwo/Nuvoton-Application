@@ -34,9 +34,33 @@ __STATIC_INLINE void SYS_Init_72MHZ(void)
     CLK->AHBCLK |= CLK_AHBCLK_ISP_EN_Msk;   // (1ul << 2)
 }
 
-__STATIC_INLINE void SYS_Init_USBD(void)
+__STATIC_INLINE void SYS_Init_72MHZ_USBD(void)
 {
-    CLK->CLKDIV = (CLK->CLKDIV & (~CLK_CLKDIV_USB_N_Msk)) | CLK_CLKDIV_USB(3);
+    /* Enable XT1_OUT (PF.0) and XT1_IN (PF.1) */
+    SYS->GPF_MFP |= SYS_GPF_MFP_PF0_XT1_OUT | SYS_GPF_MFP_PF1_XT1_IN;
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Enable Internal RC 22.1184 MHz clock */
+    /* Enable external XTAL 12 MHz clock */
+    CLK->PWRCON |= (CLK_PWRCON_OSC22M_EN_Msk | CLK_PWRCON_XTL12M_EN_Msk);
+
+    /* Waiting for external XTAL clock ready */
+    while (!(CLK->CLKSTATUS & CLK_PWRCON_XTL12M_EN_Msk));
+
+    /* Set core clock as CLK_PLLCON_144MHz_HXT from PLL */
+    CLK->PLLCON = CLK_PLLCON_144MHz_HXT;
+
+    while (!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
+
+    CLK->CLKDIV = (CLK->CLKDIV & ~(CLK_CLKDIV_HCLK_N_Msk | CLK_CLKDIV_USB_N_Msk))
+                  | (CLK_CLKDIV_HCLK(2) | CLK_CLKDIV_USB(3));
+    CLK->CLKSEL0 &= (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_PLL;
+    /* Update System Core Clock */
+    PllClock        = 144000000;
+    SystemCoreClock = 72000000;
+    CyclesPerUs     = 72;
+    /* Enable module clock */
     CLK->APBCLK |= CLK_APBCLK_USBD_EN_Msk;
 }
 
@@ -77,6 +101,39 @@ __STATIC_INLINE void SYS_Init_UART1(void)
 {
     CLK->APBCLK |= CLK_APBCLK_UART1_EN_Msk;
     SYS->GPB_MFP |= (SYS_GPB_MFP_PB4_UART1_RXD | SYS_GPB_MFP_PB5_UART1_TXD);
+    /* Select UART module clock source */
+    CLK->CLKSEL1 &= ~CLK_CLKSEL1_UART_S_Msk;
+    CLK->CLKSEL1 |= CLK_CLKSEL1_UART_S_HIRC;
 }
+
+__STATIC_INLINE void LED_Red_Only(void)
+{
+    PB13 = 0;
+    PB14 = 1;
+}
+
+__STATIC_INLINE void LED_Green_Only(void)
+{
+    PB13 = 1;
+    PB14 = 0;
+}
+
+__STATIC_INLINE void LED_All_On(void)
+{
+    PB13 = 0;
+    PB14 = 0;
+}
+
+__STATIC_INLINE void LED_All_Off(void)
+{
+    PB13 = 1;
+    PB14 = 1;
+}
+
+__STATIC_INLINE void LED_ISP_Ready(void)
+{
+    LED_Red_Only();
+}
+
 
 #endif  /* __HAL_SYS_INIT_H__ */

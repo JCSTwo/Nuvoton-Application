@@ -1,8 +1,6 @@
 #include <stdio.h>
-#include "NUC123.h"
-#include "usbd_transfer.h"
 #include "targetdev.h"
-
+#include "usbd_transfer.h"
 
 /*--------------------------------------------------------------------------*/
 STR_VCOM_LINE_CODING gLineCoding = {115200, 0, 0, 8};   /* Baud rate : 115200    */
@@ -14,52 +12,17 @@ uint16_t gCtrlSignal = 0;     /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Requ
 /*--------------------------------------------------------------------------*/
 void SYS_Init(void)
 {
-    /* Enable XT1_OUT (PF.0) and XT1_IN (PF.1) */
-    SYS->GPF_MFP |= SYS_GPF_MFP_PF0_XT1_OUT | SYS_GPF_MFP_PF1_XT1_IN;
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init System Clock                                                                                       */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Enable Internal RC 22.1184 MHz clock */
-    /* Enable external XTAL 12 MHz clock */
-    CLK->PWRCON |= (CLK_PWRCON_OSC22M_EN_Msk | CLK_PWRCON_XTL12M_EN_Msk);
-
-    /* Waiting for external XTAL clock ready */
-    while (!(CLK->CLKSTATUS & CLK_PWRCON_XTL12M_EN_Msk));
-
-    /* Set core clock as CLK_PLLCON_144MHz_HXT from PLL */
-    CLK->PLLCON = CLK_PLLCON_144MHz_HXT;
-
-    while (!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
-
-    CLK->CLKDIV &= ~CLK_CLKDIV_HCLK_N_Msk;
-    CLK->CLKDIV |= CLK_CLKDIV_HCLK(2);
-    CLK->CLKDIV &= ~CLK_CLKDIV_USB_N_Msk;
-    CLK->CLKDIV |= CLK_CLKDIV_USB(3);
-    CLK->CLKSEL0 &= (~CLK_CLKSEL0_HCLK_S_Msk);
-    CLK->CLKSEL0 |= CLK_CLKSEL0_HCLK_S_PLL;
-    /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
-    //SystemCoreClockUpdate();
-    PllClock        = 144000000;                // PLL
-    SystemCoreClock = 144000000 / 2;        // HCLK
-    CyclesPerUs     = SystemCoreClock / 1000000;                   // For SYS_SysTickDelay()
-    /* Enable module clock */
-    CLK->APBCLK |= CLK_APBCLK_USBD_EN_Msk;
+    /* Unlock protected registers */
+    SYS_UnlockReg();
+    SYS_Init_72MHZ_USBD();
     CLK->AHBCLK |= CLK_AHBCLK_ISP_EN_Msk;   // (1ul << 2)
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
 /*  Main Function                                                                                          */
 /*---------------------------------------------------------------------------------------------------------*/
-void USBD_IRQHandler(void);
 int32_t main(void)
 {
-    volatile uint32_t u32BootAP;
-    /* Unlock protected registers */
-    SYS_UnlockReg();
-    u32BootAP = (FMC->ISPCON & FMC_ISPCON_BS_Msk) ? 0 : 1;
-    PB13 = u32BootAP;
-    PB14 = !u32BootAP;
     /* Init system and multi-funcition I/O */
     SYS_Init();
     FMC->ISPCON |= (FMC_ISPCON_ISPEN_Msk | FMC_ISPCON_LDUEN_Msk | FMC_ISPCON_APUEN_Msk);
@@ -75,19 +38,21 @@ int32_t main(void)
     /* Start USB device */
     USBD_Start();
     NVIC_EnableIRQ(USBD_IRQn);
+    LED_ISP_Ready();
 
     while (DetectPin == 0) {
-        // USBD_IRQHandler();
-        if (bVcomDataReady == TRUE) {
-            ParseCmd((uint8_t *)usb_rcvbuf, EP3_MAX_PKT_SIZE);
-            EP2_Handler();
-            bVcomDataReady = FALSE;
-        }
-
         if (bHidDataReady == TRUE) {
+            LED_Red_Only();
             ParseCmd((uint8_t *)usb_rcvbuf, 64);
             EP7_Handler();
             bHidDataReady = FALSE;
+        }
+
+        if (bVcomDataReady == TRUE) {
+            LED_Green_Only();
+            ParseCmd((uint8_t *)usb_rcvbuf, EP3_MAX_PKT_SIZE);
+            EP2_Handler();
+            bVcomDataReady = FALSE;
         }
     }
 
