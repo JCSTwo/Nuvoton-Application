@@ -28,4 +28,8 @@
     <PathAndName>.\KEIL\BL_UART.uvproj</PathAndName>
   </project>
 
+  <project>
+    <PathAndName>.\KEIL\BL_SPI.uvproj</PathAndName>
+  </project>
+
 </ProjectWorkspace>
