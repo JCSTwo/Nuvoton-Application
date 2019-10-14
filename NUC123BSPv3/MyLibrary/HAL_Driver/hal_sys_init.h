@@ -25,7 +25,7 @@ __STATIC_INLINE void SYS_Init_72MHZ(void)
     while (!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
 
     CLK->CLKDIV = (CLK->CLKDIV & (~CLK_CLKDIV_HCLK_N_Msk)) | CLK_CLKDIV_HCLK(2);
-    CLK->CLKSEL0 &= (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_PLL;
+    CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_PLL;
     /* Update System Core Clock */
     /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
     //SystemCoreClockUpdate();
@@ -57,7 +57,7 @@ __STATIC_INLINE void SYS_Init_72MHZ_USBD(void)
 
     CLK->CLKDIV = (CLK->CLKDIV & ~(CLK_CLKDIV_HCLK_N_Msk | CLK_CLKDIV_USB_N_Msk))
                   | (CLK_CLKDIV_HCLK(2) | CLK_CLKDIV_USB(3));
-    CLK->CLKSEL0 &= (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_PLL;
+    CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_PLL;
     /* Update System Core Clock */
     PllClock        = 144000000;
     SystemCoreClock = 72000000;
