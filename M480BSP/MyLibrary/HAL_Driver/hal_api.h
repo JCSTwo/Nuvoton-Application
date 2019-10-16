@@ -6,6 +6,8 @@ extern "C"
 {
 #endif
 
+#include "hal_sys_init.h"
+
 #ifdef EXPORT_LIB
 #define printf(...)
 #define EP_HID_IN  EPJ

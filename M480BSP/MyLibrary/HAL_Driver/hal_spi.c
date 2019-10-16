@@ -6,20 +6,14 @@ extern "C"
 {
 #endif
 
+#include "hal_api.h"
+
 void SPI1_Init(uint32_t Pclk0)
 {
     uint32_t u32BusClock = 1000000;
     uint32_t u32Div = (((Pclk0 * 10U) / u32BusClock + 5U) / 10U) - 1U;
     u32Div &= 0xFF;
-    /* Enable SPI1 peripheral clock */
-    CLK->APBCLK0 |= CLK_APBCLK0_SPI1CKEN_Msk;
-    /* Setup SPI1 multi-function pins */
-    SYS->GPE_MFPL = (SYS->GPE_MFPL & ~(SYS_GPE_MFPL_PE0MFP_Msk | SYS_GPE_MFPL_PE1MFP_Msk))
-                    | (SYS_GPE_MFPL_PE0MFP_SPI1_MOSI | SYS_GPE_MFPL_PE1MFP_SPI1_MISO);
-    SYS->GPH_MFPH = (SYS->GPH_MFPH & ~(SYS_GPH_MFPH_PH8MFP_Msk | SYS_GPH_MFPH_PH9MFP_Msk))
-                    | (SYS_GPH_MFPH_PH8MFP_SPI1_CLK | SYS_GPH_MFPH_PH9MFP_SPI1_SS);
-    /* Enable SPI1 clock pin (PH8) schmitt trigger */
-    PH->SMTEN |= GPIO_SMTEN_SMTEN8_Msk;
+    SYS_Init_SPI1();
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init SPI                                                                                                */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -45,11 +39,6 @@ void SPI1_Init(uint32_t Pclk0)
                     (4 << SPI_FIFOCTL_RXTH_Pos);
     // SPI_EnableInt(SPI1, SPI_FIFO_TXTH_INT_MASK | SPI_FIFO_RXTO_INT_MASK);
     SPI1->FIFOCTL |= (SPI_FIFOCTL_TXTHIEN_Msk | SPI_FIFOCTL_RXTOIEN_Msk);
-    // SPI2 Pins are connected with SPI1
-    GPIO_SetMode(PG, BIT2, GPIO_MODE_INPUT);
-    GPIO_SetMode(PG, BIT3, GPIO_MODE_INPUT);
-    GPIO_SetMode(PG, BIT4, GPIO_MODE_INPUT);
-    GPIO_SetMode(PF, BIT11, GPIO_MODE_INPUT);
 }
 
 

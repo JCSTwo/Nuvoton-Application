@@ -19,14 +19,7 @@ void CAN_Test(void);
 
 void CAN_Init(void)
 {
-    /* Enable CAN1 module clock */
-    CLK->APBCLK0 |= CLK_APBCLK0_CAN1CKEN_Msk;
-    /* Set PC multi-function pins for CAN1 RXD(PC.9) and TXD(PC.10) */
-    SYS->GPC_MFPH = (SYS->GPC_MFPH & ~(SYS_GPC_MFPH_PC9MFP_Msk | SYS_GPC_MFPH_PC10MFP_Msk)) |
-                    (SYS_GPC_MFPH_PC9MFP_CAN1_RXD | SYS_GPC_MFPH_PC10MFP_CAN1_TXD);
-    /* Set CAN transceiver to high speed mode */
-    GPIO_SETMODE(PC, 11, GPIO_MODE_OUTPUT);
-    PC11 = 0;
+    SYS_Init_CAN1();
     CAN_SetBaudRate(CAN1, CAN_BAUD_RATE);
     CAN_EnableInt(CAN1, (CAN_CON_IE_Msk | CAN_CON_SIE_Msk | CAN_CON_EIE_Msk));
     NVIC_SetPriority(CAN1_IRQn, (1 << __NVIC_PRIO_BITS) - 2);

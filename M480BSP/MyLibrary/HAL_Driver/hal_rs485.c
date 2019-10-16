@@ -9,24 +9,10 @@ extern "C"
 #include "hal_api.h"
 
 #define MAX_PKT_SIZE			(64)
-#define nRTSPin						(PE12)
-#define REVEIVE_MODE			(0)
-#define TRANSMIT_MODE			(1)
 
 void RS485_Init(void)
 {
-    /* Enable UART module clock */
-    CLK->APBCLK0 |= CLK_APBCLK0_UART1CKEN_Msk;
-    /* Select UART module clock source */
-    CLK->CLKSEL1 &= ~CLK_CLKSEL1_UART1SEL_Msk;
-    CLK->CLKSEL1 |= CLK_CLKSEL1_UART1SEL_HIRC;
-    // SYS_GPC_MFPH_PC8MFP_UART1_RXD
-    // SYS_GPE_MFPH_PE12MFP_UART1_nRTS
-    // SYS_GPE_MFPH_PE13MFP_UART1_TXD
-    PE->MODE = (PE->MODE & ~(0x3ul << (12 << 1))) | (GPIO_MODE_OUTPUT << (12 << 1));
-    nRTSPin = REVEIVE_MODE;
-    SYS->GPC_MFPH = (SYS->GPC_MFPH & ~(SYS_GPC_MFPH_PC8MFP_Msk)) | SYS_GPC_MFPH_PC8MFP_UART1_RXD;
-    SYS->GPE_MFPH = (SYS->GPE_MFPH & ~(SYS_GPE_MFPH_PE13MFP_Msk)) | SYS_GPE_MFPH_PE13MFP_UART1_TXD;
+    SYS_Init_RS485();
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init UART                                                                                               */
     /*---------------------------------------------------------------------------------------------------------*/
