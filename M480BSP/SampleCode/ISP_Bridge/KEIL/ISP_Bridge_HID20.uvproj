@@ -171,7 +171,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4106</DriverSelection>
+            <DriverSelection>4104</DriverSelection>
           </Flash1>
           <bUseTDR>0</bUseTDR>
           <Flash2>Bin\Nu_Link.dll</Flash2>
@@ -367,7 +367,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\Library\CMSIS\Include;..\..\..\Library\Device\Nuvoton\M480\Include;..\..\..\Library\StdDriver\inc;..\;..\..\..\MyLibrary\HAL_Driver;..\..\..\MyLibrary\</IncludePath>
+              <IncludePath>..\..\..\Library\CMSIS\Include;..\..\..\Library\Device\Nuvoton\M480\Include;..\..\..\Library\StdDriver\inc;..\;..\..\..\MyLibrary\HAL_Driver;..\..\..\MyLibrary\;..\ISP_HID_20\</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -441,11 +441,6 @@
               <FilePath>..\ISP_HID_20\hid_transfer.c</FilePath>
             </File>
             <File>
-              <FileName>hsusbd_user.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\ISP_HID_20\hsusbd_user.c</FilePath>
-            </File>
-            <File>
               <FileName>isp_bridge.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\isp_bridge.c</FilePath>
@@ -499,6 +494,11 @@
               <FileName>hal_can_isp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\MyLibrary\HAL_Driver\hal_can_isp.c</FilePath>
+            </File>
+            <File>
+              <FileName>hsusbd_user.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\ISP_Driver\hsusbd_user.c</FilePath>
             </File>
           </Files>
         </Group>

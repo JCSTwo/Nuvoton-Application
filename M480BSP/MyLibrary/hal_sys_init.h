@@ -10,7 +10,7 @@ __STATIC_INLINE void SYS_Init_192MHZ(void)
     SYS_UnlockReg();
     /* Set XT1_OUT(PF.2) and XT1_IN(PF.3) to input mode */
     PF->MODE &= ~(GPIO_MODE_MODE2_Msk | GPIO_MODE_MODE3_Msk);
-    CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
+    CLK->PWRCTL |= (CLK_PWRCTL_HIRCEN_Msk | CLK_PWRCTL_HXTEN_Msk);
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HIRC;
 
     // Waiting for clock switching ok
@@ -29,7 +29,7 @@ __STATIC_INLINE void SYS_Init_192MHZ(void)
     CLK->CLKDIV0 = CLK->CLKDIV0 & (~CLK_CLKDIV0_HCLKDIV_Msk);   /* PLL/1 */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_PLL;
     /* Set both PCLK0 and PCLK1 as HCLK/2 */
-    CLK->PCLKDIV = CLK_PCLKDIV_PCLK0DIV2 | CLK_PCLKDIV_PCLK1DIV2;
+    CLK->PCLKDIV = CLK_PCLKDIV_APB0DIV_DIV2 | CLK_PCLKDIV_APB1DIV_DIV2;
     PllClock        = FREQ_192MHZ;
     SystemCoreClock = FREQ_192MHZ;
     CyclesPerUs     = (SystemCoreClock + 500000UL) / 1000000UL; // For SYS_SysTickDelay()
