@@ -13,7 +13,6 @@ extern "C"
 #define EP_HID_IN  EPJ
 #define EP_HID_OUT EPK
 #else
-#define __set_PRIMASK(...)
 #define EP_HID_IN  EPA
 #define EP_HID_OUT EPB
 

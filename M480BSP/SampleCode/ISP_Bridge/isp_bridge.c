@@ -13,7 +13,6 @@ extern "C"
 static volatile uint8_t g_lib_CmdFromTool = 0ul;
 static volatile uint8_t g_lib_CmdToTarget = 0ul;
 static volatile uint8_t g_lib_IspModule = 0ul; // 3: SPI, 4: I2C, 5: RS485, 6: CAN
-static volatile uint32_t g_lib_Delay = 0ul;
 
 static uint8_t g_lib_CmdBuf[64] __attribute__((aligned(4)));
 static uint8_t g_lib_AckBuf[64] __attribute__((aligned(4)));
@@ -36,6 +35,8 @@ void ISP_Bridge_Init(void)
     UI2C0_Init(Pclk0, 100000);
     RS485_Init();
     CAN_Init();
+    LED_Init();
+    LED_Set(0, 0, 0, 0);
 }
 
 __STATIC_INLINE uint16_t Checksum(unsigned char *buf, int len)
@@ -66,39 +67,36 @@ void ISP_Bridge_Main(void)
 
         switch (g_lib_IspModule) {
             case 3:
+                LED_Set(1, 0, 1, 1);
                 // add specific pattern "0x53504900" to word0 of g_lib_CmdBuf
-                __set_PRIMASK(1);
                 SPI1_Write((uint32_t *)g_lib_CmdBuf, 16);
-                __set_PRIMASK(0);
                 g_lib_CmdToTarget = 1;
                 break;
 
             case 4:
-                __set_PRIMASK(1);
+                LED_Set(0, 1, 1, 1);
 
                 if (64 == UI2C_WriteMultiBytes(UI2C0, 0x60, g_lib_CmdBuf, 64)) {
                     g_lib_CmdToTarget = 1;
                 } else {
                 }
 
-                __set_PRIMASK(0);
                 break;
 
             case 5:
-                __set_PRIMASK(1);
+                LED_Set(1, 1, 0, 1);
                 RS485_WriteMultiBytes(g_lib_CmdBuf);
-                __set_PRIMASK(0);
                 g_lib_CmdToTarget = 0;
                 return;
 
             case 6:
-                __set_PRIMASK(1);
+                LED_Set(1, 1, 1, 0);
                 CAN_Package_Tx(CAN1, g_lib_CmdBuf + 2);
-                __set_PRIMASK(0);
                 g_lib_CmdToTarget = 0;
                 return;
 
             default:
+                LED_Set(1, 1, 1, 1);
                 g_lib_CmdToTarget = 0;
                 return;
         }
@@ -122,27 +120,18 @@ void ISP_Bridge_Main(void)
 
     // polling response for SPI & I2C interface
     if (g_lib_CmdToTarget && (g_lib_CmdFromTool == FALSE)) {
-        uint32_t delay = 349525UL, us = 0;
+        uint32_t delay = 0;
 
         if ((cmd == 0xA0) || (cmd == 0xA3) || (cmd == 0xC3)) {
             // #define CMD_UPDATE_APROM      0x000000A0
             // #define CMD_ERASE_ALL         0x000000A3
             // #define CMD_UPDATE_DATAFLASH  0x000000C3
-            g_lib_Delay = 300000;
+            delay = 300000;
         } else if (cmd == 0xAE) {
             // #define CMD_CONNECT           0x000000AE
-            g_lib_Delay = 20000;
+            delay = 20000;
         } else {
-            g_lib_Delay = 50000;
-        }
-
-        us = g_lib_Delay;
-
-        if (us > delay) {
-            us -= delay;
-        } else {
-            delay = us;
-            us = 0UL;
+            delay = 50000;
         }
 
         SysTick->LOAD = delay * _CyclesPerUs;

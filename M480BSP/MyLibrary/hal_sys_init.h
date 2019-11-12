@@ -249,4 +249,12 @@ __STATIC_INLINE void LED_Init(void)
     GPIO_SETMODE(PF, 4, GPIO_MODE_QUASI);
 }
 
+__STATIC_INLINE void LED_Set(uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3)
+{
+    LED0 = v0;
+    LED1 = v1;
+    LED2 = v2;
+    LED3 = v3;
+}
+
 #endif  /* __HAL_SYS_INIT_H__ */

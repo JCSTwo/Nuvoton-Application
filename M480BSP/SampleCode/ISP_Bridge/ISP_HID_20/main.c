@@ -19,6 +19,7 @@ int32_t main(void)
     HID_Init();
     /* Enable USBD interrupt */
     NVIC_EnableIRQ(USBD20_IRQn);
+
     /* Start transaction */
     while (1) {
         if (HSUSBD_IS_ATTACHED()) {
