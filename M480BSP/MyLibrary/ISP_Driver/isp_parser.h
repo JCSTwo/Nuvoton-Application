@@ -15,11 +15,33 @@
 #define CMD_UPDATE_DATAFLASH        0x000000C3
 #define CMD_RESEND_PACKET           0x000000FF
 
-extern uint8_t  volatile g_ISP_CMD;
-extern uint16_t volatile g_ISP_CKS;
-extern uint8_t  volatile g_ISP_ACK;
-extern uint32_t volatile g_ISP_DLY;
+// ISP Application Note v1-5: 1.1 Receive/Send data
+__STATIC_INLINE uint16_t ISP_Checksum(uint8_t *buf, int len)
+{
+    int i;
+    uint16_t c;
 
-extern void ParseISP(const unsigned char *buf);
+    for (c = 0, i = 0 ; i < len; i++) {
+        c += buf[i];
+    }
+
+    return (c);
+}
+
+// ISP Application Note v1-5: 4.3.2 Commands response delay
+__STATIC_INLINE uint32_t ISP_ResponseDelay(uint8_t cmd)
+{
+    if ((cmd == 0xA0) || (cmd == 0xA3) || (cmd == 0xC3)) {
+        // #define CMD_UPDATE_APROM      0x000000A0
+        // #define CMD_ERASE_ALL         0x000000A3
+        // #define CMD_UPDATE_DATAFLASH  0x000000C3
+        return 300000;
+    } else if (cmd == 0xAE) {
+        // #define CMD_CONNECT           0x000000AE
+        return 20000;
+    } else {
+        return 50000;
+    }
+}
 
 #endif  // #ifndef ISP_PARSER_H

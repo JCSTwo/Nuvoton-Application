@@ -4,6 +4,8 @@
 #include <string.h>
 #include "hal_api.h"
 
+#include "ISP_Driver\isp_parser.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -39,18 +41,6 @@ void ISP_Bridge_Init(void)
     LED_Set(0, 0, 0, 0);
 }
 
-__STATIC_INLINE uint16_t Checksum(unsigned char *buf, int len)
-{
-    int i;
-    uint16_t c;
-
-    for (c = 0, i = 0 ; i < len; i++) {
-        c += buf[i];
-    }
-
-    return (c);
-}
-
 void ISP_Bridge_Main(void)
 {
     static uint32_t cks;
@@ -63,7 +53,7 @@ void ISP_Bridge_Main(void)
         g_lib_IspModule = g_lib_CmdBuf[1];
         g_lib_CmdBuf[1] = 0;
         // Checksum is the only way to verify correctness of ACK according to spec.
-        cks = Checksum(g_lib_CmdBuf, 64);
+        cks = ISP_Checksum(g_lib_CmdBuf, 64);
 
         switch (g_lib_IspModule) {
             case 3:
@@ -120,20 +110,7 @@ void ISP_Bridge_Main(void)
 
     // polling response for SPI & I2C interface
     if (g_lib_CmdToTarget && (g_lib_CmdFromTool == FALSE)) {
-        uint32_t delay = 0;
-
-        if ((cmd == 0xA0) || (cmd == 0xA3) || (cmd == 0xC3)) {
-            // #define CMD_UPDATE_APROM      0x000000A0
-            // #define CMD_ERASE_ALL         0x000000A3
-            // #define CMD_UPDATE_DATAFLASH  0x000000C3
-            delay = 300000;
-        } else if (cmd == 0xAE) {
-            // #define CMD_CONNECT           0x000000AE
-            delay = 20000;
-        } else {
-            delay = 50000;
-        }
-
+        uint32_t delay = ISP_ResponseDelay(cmd);
         SysTick->LOAD = delay * _CyclesPerUs;
         SysTick->VAL  = 0x0UL;
         SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
