@@ -33,12 +33,18 @@ void ISP_Bridge_UsbDataOut()
 void ISP_Bridge_Init(void)
 {
     uint32_t Pclk0 = FREQ_192MHZ / 2;
+    // System Init (SYS, CLK, GPIO and multi-function setting)
+    SYS_Init_SPI1();
+    SYS_Init_UI2C0();
+    SYS_Init_RS485();
+    SYS_Init_CAN1();
+    // Peripheral Init
     SPI1_Init(Pclk0);
     UI2C0_Init(Pclk0, 100000);
     RS485_Init();
     CAN_Init();
-    LED_Init();
-    LED_Set(0, 0, 0, 0);
+    // Init Ready (turn on all LED)
+    SYS_Init_LED(0, 0, 0, 0);
 }
 
 void ISP_Bridge_Main(void)

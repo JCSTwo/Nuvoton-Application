@@ -241,12 +241,16 @@ __STATIC_INLINE void SYS_Init_USBD(void)
 #define LED2 PB9 // RED
 #define LED3 PB8 // GREEN
 
-__STATIC_INLINE void LED_Init(void)
+__STATIC_INLINE void SYS_Init_LED(uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3)
 {
     GPIO_SETMODE(PB, 8, GPIO_MODE_QUASI);
     GPIO_SETMODE(PB, 9, GPIO_MODE_QUASI);
     GPIO_SETMODE(PC, 6, GPIO_MODE_QUASI);
     GPIO_SETMODE(PF, 4, GPIO_MODE_QUASI);
+    LED0 = v0;
+    LED1 = v1;
+    LED2 = v2;
+    LED3 = v3;
 }
 
 __STATIC_INLINE void LED_Set(uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3)

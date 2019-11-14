@@ -5,8 +5,6 @@ extern "C"
 {
 #endif
 
-#include "hal_api.h"
-
 // UI2C_Open(UI2C0, u32ClkSpeed)
 static __INLINE void UI2C0_Open(uint32_t Pclk0, uint32_t u32BusClock)
 {
@@ -31,7 +29,6 @@ static __INLINE void UI2C0_Open(uint32_t Pclk0, uint32_t u32BusClock)
 // Master
 void UI2C0_Init(uint32_t Pclk0, uint32_t u32BusClock)
 {
-    SYS_Init_UI2C0();
     /* Open USCI_I2C0 and set clock to 100k */
     // UI2C_Open(UI2C0, u32ClkSpeed);
     UI2C0_Open(Pclk0, u32BusClock);

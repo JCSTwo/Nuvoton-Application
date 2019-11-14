@@ -6,8 +6,6 @@ extern "C"
 {
 #endif
 
-#include "hal_api.h"
-
 #define CAN_BAUD_RATE                     500000
 #define Master_ISP_ID                     0x487
 #define Device0_ISP_ID                    0x784
@@ -19,7 +17,6 @@ void CAN_Test(void);
 
 void CAN_Init(void)
 {
-    SYS_Init_CAN1();
     CAN_SetBaudRate(CAN1, CAN_BAUD_RATE);
     CAN_EnableInt(CAN1, (CAN_CON_IE_Msk | CAN_CON_SIE_Msk | CAN_CON_EIE_Msk));
     NVIC_SetPriority(CAN1_IRQn, (1 << __NVIC_PRIO_BITS) - 2);
