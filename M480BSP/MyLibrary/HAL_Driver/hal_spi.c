@@ -6,37 +6,93 @@ extern "C"
 {
 #endif
 
-void SPI1_Init(uint32_t Pclk0)
+
+/**
+  * @brief  This function make SPI module be ready to transfer.
+  * @param[in]  u32SPIMode Decides the transfer timing. (SPI_MODE_0, SPI_MODE_1, SPI_MODE_2, SPI_MODE_3)
+  * @param[in]  u32DataWidth Decides the data width of a SPI transaction.
+  * @param[in]  u32BusClock The expected frequency of SPI bus clock in Hz.
+  * @return Actual frequency of SPI peripheral clock.
+  * @details By default, the automatic slave selection function is disabled.
+  *          The actual clock rate may be different from the target SPI clock rate.
+  *          For example, if the SPI source clock rate is 12 MHz and the target SPI bus clock rate is 7 MHz, the
+  *          actual SPI clock rate will be 6MHz.
+  * @note   If u32BusClock = 0, DIVIDER setting will be set to the maximum value.
+  * @note   If u32BusClock >= SPI peripheral clock source, DIVIDER will be set to 0.
+  */
+uint32_t SPI1_MasterOpen(uint32_t u32SPIMode,
+                         uint32_t u32DataWidth,
+                         uint32_t u32BusClock,
+                         uint32_t u32ActiveLevel,
+                         uint32_t u32SuspendInterval,
+                         uint32_t u32SendLSBFirst)
 {
-    uint32_t u32BusClock = 1000000;
-    uint32_t u32Div = (((Pclk0 * 10U) / u32BusClock + 5U) / 10U) - 1U;
-    u32Div &= 0xFF;
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init SPI                                                                                                */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Configure as a master, clock idle low, 32-bit transaction, drive output on falling clock edge and latch input on rising edge. */
-    /* Set IP clock divider. SPI clock rate = 2MHz */
-    // SPI_Open(SPI1, SPI_MASTER, SPI_MODE_0, 32, 1000000);
+    uint32_t u32ClkSrc = 0U, u32Div, u32RetValue = 0U;
+    // void SPI_Close(SPI_T *spi)
+    {
+        /* Reset SPI */
+        SYS->IPRST1 |= SYS_IPRST1_SPI1RST_Msk;
+        SYS->IPRST1 &= ~SYS_IPRST1_SPI1RST_Msk;
+    }
     /* Disable I2S mode */
-    SPI1->I2SCTL &= ~SPI_I2SCTL_I2SEN_Msk;
-    /* Default setting: slave selection signal is active low; disable automatic slave selection function. */
-    SPI1->SSCTL = SPI_SS_ACTIVE_LOW;
-    /* Default setting: MSB first, disable unit transfer interrupt, SP_CYCLE = 8. */
-    SPI1->CTL = SPI_MASTER | ((32 & 0x1F) << SPI_CTL_DWIDTH_Pos) | (SPI_MODE_0) | SPI_CTL_SPIEN_Msk | (0x8 << SPI_CTL_SUSPITV_Pos);
-    SPI1->CLKDIV = (SPI1->CLKDIV & (~SPI_CLKDIV_DIVIDER_Msk)) | (u32Div << SPI_CLKDIV_DIVIDER_Pos);
-    /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
-    // SPI_EnableAutoSS(SPI1, SPI_SS, SPI_SS_ACTIVE_LOW);
-    // SPI1->SSCTL = (SPI1->SSCTL & (~(SPI_SSCTL_AUTOSS_Msk | SPI_SSCTL_SSACTPOL_Msk | SPI_SSCTL_SS_Msk))) | (SPI_SS | SPI_SS_ACTIVE_LOW | SPI_SSCTL_AUTOSS_Msk);
-    SPI1->SSCTL = (SPI1->SSCTL & (~(SPI_SSCTL_AUTOSS_Msk | SPI_SSCTL_SSACTPOL_Msk | SPI_SSCTL_SS_Msk)));
+    // SPI1->I2SCTL &= ~SPI_I2SCTL_I2SEN_Msk;
+
+    if (u32DataWidth >= 32U) {
+        u32DataWidth = 0U;
+    }
+
+    /* Default setting: disable automatic slave selection function. */
+    SPI1->SSCTL = u32ActiveLevel;
+    /* Default setting: disable unit transfer interrupt */
+    SPI1->CTL = SPI_MASTER | SPI_CTL_SPIEN_Msk
+                | (u32DataWidth << SPI_CTL_DWIDTH_Pos)
+                | (u32SPIMode)
+                | ((u32SuspendInterval & 0xF) << SPI_CTL_SUSPITV_Pos)
+                | ((u32SendLSBFirst & 0x1) << SPI_CTL_LSB_Pos);
+    /* Check clock source of SPI */
+    u32ClkSrc = (FREQ_192MHZ / 2);
+
+    if (u32BusClock >= u32ClkSrc) {
+        /* Set DIVIDER = 0 */
+        SPI1->CLKDIV = 0U;
+        /* Return master peripheral clock rate */
+        u32RetValue = u32ClkSrc;
+    } else if (u32BusClock == 0U) {
+        /* Set DIVIDER to the maximum value 0xFF. f_spi = f_spi_clk_src / (DIVIDER + 1) */
+        SPI1->CLKDIV |= SPI_CLKDIV_DIVIDER_Msk;
+        /* Return master peripheral clock rate */
+        u32RetValue = (u32ClkSrc / (0xFFU + 1U));
+    } else {
+        u32Div = (((u32ClkSrc * 10U) / u32BusClock + 5U) / 10U) - 1U; /* Round to the nearest integer */
+
+        if (u32Div > 0xFFU) {
+            u32Div = 0xFFU;
+            SPI1->CLKDIV |= SPI_CLKDIV_DIVIDER_Msk;
+            /* Return master peripheral clock rate */
+            u32RetValue = (u32ClkSrc / (0xFFU + 1U));
+        } else {
+            SPI1->CLKDIV = (SPI1->CLKDIV & (~SPI_CLKDIV_DIVIDER_Msk)) | (u32Div << SPI_CLKDIV_DIVIDER_Pos);
+            /* Return master peripheral clock rate */
+            u32RetValue = (u32ClkSrc / (u32Div + 1U));
+        }
+    }
+
     /* Set TX FIFO threshold, enable TX FIFO threshold interrupt and RX FIFO time-out interrupt */
     // SPI_SetFIFO(SPI1, 4, 4);
-    SPI1->FIFOCTL = (SPI1->FIFOCTL & ~(SPI_FIFOCTL_TXTH_Msk | SPI_FIFOCTL_RXTH_Msk)) |
-                    (4 << SPI_FIFOCTL_TXTH_Pos) |
-                    (4 << SPI_FIFOCTL_RXTH_Pos);
     // SPI_EnableInt(SPI1, SPI_FIFO_TXTH_INT_MASK | SPI_FIFO_RXTO_INT_MASK);
-    SPI1->FIFOCTL |= (SPI_FIFOCTL_TXTHIEN_Msk | SPI_FIFOCTL_RXTOIEN_Msk);
+    {
+        SPI1->FIFOCTL = (SPI1->FIFOCTL & ~(SPI_FIFOCTL_TXTH_Msk | SPI_FIFOCTL_RXTH_Msk)) |
+                        (4 << SPI_FIFOCTL_TXTH_Pos) |
+                        (4 << SPI_FIFOCTL_RXTH_Pos);
+        SPI1->FIFOCTL |= (SPI_FIFOCTL_TXTHIEN_Msk | SPI_FIFOCTL_RXTOIEN_Msk);
+    }
+    return u32RetValue;
 }
 
+void SPI1_Init(uint32_t Pclk0)
+{
+    SPI1_MasterOpen(SPI_MODE_0, 32, 1000000, SPI_SS_ACTIVE_LOW, 0x08, 0);
+}
 
 uint32_t SPI1_Write(uint32_t *buf, uint32_t len)
 {

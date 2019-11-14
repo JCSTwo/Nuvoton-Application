@@ -5,33 +5,11 @@ extern "C"
 {
 #endif
 
-// UI2C_Open(UI2C0, u32ClkSpeed)
-static __INLINE void UI2C0_Open(uint32_t Pclk0, uint32_t u32BusClock)
-{
-    uint32_t u32ClkDiv;
-    uint32_t u32Pclk = Pclk0;
-    u32ClkDiv = (uint32_t)((((((u32Pclk / 2U) * 10U) / (u32BusClock)) + 5U) / 10U) - 1U); /* Compute proper divider for USCI_I2C clock */
-    /* Enable USCI_I2C protocol */
-    UI2C0->CTL &= ~UI2C_CTL_FUNMODE_Msk;
-    UI2C0->CTL = 4U << UI2C_CTL_FUNMODE_Pos;
-    /* Data format configuration */
-    /* 8 bit data length */
-    UI2C0->LINECTL &= ~UI2C_LINECTL_DWIDTH_Msk;
-    UI2C0->LINECTL |= 8U << UI2C_LINECTL_DWIDTH_Pos;
-    /* MSB data format */
-    UI2C0->LINECTL &= ~UI2C_LINECTL_LSB_Msk;
-    /* Set USCI_I2C bus clock */
-    UI2C0->BRGEN &= ~UI2C_BRGEN_CLKDIV_Msk;
-    UI2C0->BRGEN |= (u32ClkDiv << UI2C_BRGEN_CLKDIV_Pos);
-    UI2C0->PROTCTL |=  UI2C_PROTCTL_PROTEN_Msk;
-}
-
 // Master
 void UI2C0_Init(uint32_t Pclk0, uint32_t u32BusClock)
 {
     /* Open USCI_I2C0 and set clock to 100k */
-    // UI2C_Open(UI2C0, u32ClkSpeed);
-    UI2C0_Open(Pclk0, u32BusClock);
+    UI2C_Open(UI2C0, u32BusClock);
     /* Get USCI_I2C0 Bus Clock */
     // printf("UI2C0 clock %d Hz\n", UI2C_GetBusClockFreq(UI2C0));
     /* Set USCI_I2C0 Slave Addresses */
