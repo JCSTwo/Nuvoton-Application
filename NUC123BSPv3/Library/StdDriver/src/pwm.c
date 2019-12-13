@@ -47,49 +47,48 @@ uint32_t PWM_ConfigCaptureChannel(PWM_T *pwm,
     uint16_t u16Prescale = 2;
     uint16_t u16CNR = 0xFFFF;
 
-    if (u32ChannelNum < 2) { /* channel 0 and channel 1 */
+    if(u32ChannelNum < 2)/* channel 0 and channel 1 */
         u32Src = ((CLK->CLKSEL2 & (CLK_CLKSEL2_PWM01_S_EXT_Msk)) >> (CLK_CLKSEL2_PWM01_S_EXT_Pos - 2)) | (CLK->CLKSEL1 & (CLK_CLKSEL1_PWM01_S_Msk)) >> (CLK_CLKSEL1_PWM01_S_Pos);
-    } else { /* channel 2 and channel 3 */
+    else /* channel 2 and channel 3 */
         u32Src = ((CLK->CLKSEL2 & (CLK_CLKSEL2_PWM23_S_EXT_Msk)) >> (CLK_CLKSEL2_PWM23_S_EXT_Pos - 2)) | (CLK->CLKSEL1 & (CLK_CLKSEL1_PWM23_S_Msk)) >> (CLK_CLKSEL1_PWM23_S_Pos);
-    }
 
-    if (u32Src == 2) {
+    if(u32Src == 2)
+    {
         SystemCoreClockUpdate();
         u32PWMClockSrc = SystemCoreClock;
-    } else {
+    }
+    else
+    {
         u32PWMClockSrc = u32PWMClkTbl[u32Src];
     }
 
     u32PWMClockSrc /= 1000;
-
-    for (; u16Prescale <= 0x100; u16Prescale++) {
+    for(; u16Prescale <= 0x100; u16Prescale++)
+    {
         u32NearestUnitTimeNsec = (1000000 * u16Prescale * u8Divider) / u32PWMClockSrc;
-
-        if (u32NearestUnitTimeNsec < (u32UnitTimeNsec)) {
-            if ((u16Prescale == 0x100) && (u8Divider == 16)) { //limit to the maximum unit time(nano second)
+        if(u32NearestUnitTimeNsec < (u32UnitTimeNsec))
+        {
+            if((u16Prescale == 0x100) && (u8Divider == 16))  //limit to the maximum unit time(nano second)
                 break;
-            }
-
-            if (u16Prescale == 0x100) {
+            if(u16Prescale == 0x100)
+            {
                 u16Prescale = 2;
                 u8Divider <<= 1; // clk divider could only be 1, 2, 4, 8, 16
                 continue;
             }
-
-            if (!((1000000  * ((u16Prescale * u8Divider) + 1)) > (u32NearestUnitTimeNsec * u32PWMClockSrc))) {
+            if(!((1000000  * ((u16Prescale * u8Divider) + 1)) > (u32NearestUnitTimeNsec * u32PWMClockSrc)))
                 break;
-            }
-
             continue;
         }
-
         break;
     }
 
     // Store return value here 'cos we're gonna change u8Divider & u16Prescale & u16CNR to the real value to fill into register
     u16Prescale -= 1;
+
     // convert to real register value
     u8Divider = u32PWMDividerToRegTbl[u8Divider];
+
     // every two channels share a prescaler
     (pwm)->PPR = ((pwm)->PPR & ~(PWM_PPR_CP01_Msk << ((u32ChannelNum >> 1) * 8))) | (u16Prescale << ((u32ChannelNum >> 1) * 8));
     (pwm)->CSR = ((pwm)->CSR & ~(PWM_CSR_CSR0_Msk << (4 * u32ChannelNum))) | (u8Divider << (4 * u32ChannelNum));
@@ -97,6 +96,7 @@ uint32_t PWM_ConfigCaptureChannel(PWM_T *pwm,
     (pwm)->PCR &= ~(PWM_PCR_PWM01TYPE_Msk << (u32ChannelNum >> 1));
     (pwm)->PCR |= PWM_PCR_CH0MOD_Msk << (8 * u32ChannelNum);
     *((__IO uint32_t *)((((uint32_t) & ((pwm)->CNR0)) + u32ChannelNum * 12))) = u16CNR;
+
     return (u32NearestUnitTimeNsec);
 }
 
@@ -125,54 +125,54 @@ uint32_t PWM_ConfigOutputChannel(PWM_T *pwm,
     uint32_t u32PWMDividerToRegTbl[17] = {NULL, 4, 0, NULL, 1, NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3};
     uint16_t u16CNR = 0xFFFF;
 
-    if (u32ChannelNum < 2) { /* channel 0 and channel 1 */
+    if(u32ChannelNum < 2)/* channel 0 and channel 1 */
         u32Src = ((CLK->CLKSEL2 & (CLK_CLKSEL2_PWM01_S_EXT_Msk)) >> (CLK_CLKSEL2_PWM01_S_EXT_Pos - 2)) | (CLK->CLKSEL1 & (CLK_CLKSEL1_PWM01_S_Msk)) >> (CLK_CLKSEL1_PWM01_S_Pos);
-    } else { /* channel 2 and channel 3 */
+    else /* channel 2 and channel 3 */
         u32Src = ((CLK->CLKSEL2 & (CLK_CLKSEL2_PWM23_S_EXT_Msk)) >> (CLK_CLKSEL2_PWM23_S_EXT_Pos - 2)) | (CLK->CLKSEL1 & (CLK_CLKSEL1_PWM23_S_Msk)) >> (CLK_CLKSEL1_PWM23_S_Pos);
-    }
 
-    if (u32Src == 2) {
+    if(u32Src == 2)
+    {
         SystemCoreClockUpdate();
         u32PWMClockSrc = SystemCoreClock;
-    } else {
+    }
+    else
+    {
         u32PWMClockSrc = u32PWMClkTbl[u32Src];
     }
 
-    for (; u8Divider < 17; u8Divider <<= 1) { // clk divider could only be 1, 2, 4, 8, 16
+    for(; u8Divider < 17; u8Divider <<= 1)    // clk divider could only be 1, 2, 4, 8, 16
+    {
         i = (u32PWMClockSrc / (u32Frequency)) / u8Divider;
-
         // If target value is larger than CNR * prescale, need to use a larger divider
-        if (i > (0x10000 * 0x100)) {
+        if(i > (0x10000 * 0x100))
             continue;
-        }
 
         // CNR = 0xFFFF + 1, get a prescaler that CNR value is below 0xFFFF
         u8Prescale = (i + 0xFFFF) / 0x10000;
 
         // u8Prescale must at least be 2, otherwise the output stop
-        if (u8Prescale < 3) {
+        if(u8Prescale < 3)
             u8Prescale = 2;
-        }
 
         i /= u8Prescale;
 
-        if (i <= 0x10000) {
-            if (i == 1) {
-                u16CNR = 1;    // Too fast, and PWM cannot generate expected frequency...
-            } else {
+        if(i <= 0x10000)
+        {
+            if(i == 1)
+                u16CNR = 1;     // Too fast, and PWM cannot generate expected frequency...
+            else
                 u16CNR = i;
-            }
-
             break;
         }
     }
-
     // Store return value here 'cos we're gonna change u8Divider & u8Prescale & u16CNR to the real value to fill into register
     i = u32PWMClockSrc / (u8Prescale * u8Divider * u16CNR);
+
     u8Prescale -= 1;
     u16CNR -= 1;
     // convert to real register value
     u8Divider = u32PWMDividerToRegTbl[u8Divider];
+
     // every two channels share a prescaler
     (pwm)->PPR = ((pwm)->PPR & ~(PWM_PPR_CP01_Msk << ((u32ChannelNum >> 1) * 8))) | (u8Prescale << ((u32ChannelNum >> 1) * 8));
     (pwm)->CSR = ((pwm)->CSR & ~(PWM_CSR_CSR0_Msk << (4 * u32ChannelNum))) | (u8Divider << (4 * u32ChannelNum));
@@ -180,14 +180,17 @@ uint32_t PWM_ConfigOutputChannel(PWM_T *pwm,
     (pwm)->PCR &= ~(PWM_PCR_PWM01TYPE_Msk << (u32ChannelNum >> 1));
     (pwm)->PCR |= PWM_PCR_CH0MOD_Msk << (8 * u32ChannelNum);
 
-    if (u32DutyCycle) {
+    if(u32DutyCycle)
+    {
         *((__IO uint32_t *)((((uint32_t) & ((pwm)->CMR0)) + u32ChannelNum * 12))) = u32DutyCycle * (u16CNR + 1) / 100 - 1;
-    } else {
+    }
+    else
+    {
         *((__IO uint32_t *)((((uint32_t) & ((pwm)->CMR0)) + u32ChannelNum * 12))) = 0;
     }
-
     *((__IO uint32_t *)((((uint32_t) & ((pwm)->CNR0)) + u32ChannelNum * 12))) = u16CNR;
-    return (i);
+
+    return(i);
 }
 
 
@@ -203,13 +206,13 @@ uint32_t PWM_ConfigOutputChannel(PWM_T *pwm,
 void PWM_Start(PWM_T *pwm, uint32_t u32ChannelMask)
 {
     uint32_t u32Mask = 0, i;
-
-    for (i = 0; i < PWM_CHANNEL_NUM; i ++) {
-        if (u32ChannelMask & (1 << i)) {
+    for(i = 0; i < PWM_CHANNEL_NUM; i ++)
+    {
+        if(u32ChannelMask & (1 << i))
+        {
             u32Mask |= (PWM_PCR_CH0EN_Msk << (i * 8));
         }
     }
-
     (pwm)->PCR |= u32Mask;
 }
 
@@ -225,9 +228,10 @@ void PWM_Start(PWM_T *pwm, uint32_t u32ChannelMask)
 void PWM_Stop(PWM_T *pwm, uint32_t u32ChannelMask)
 {
     uint32_t i;
-
-    for (i = 0; i < PWM_CHANNEL_NUM; i ++) {
-        if (u32ChannelMask & (1 << i)) {
+    for(i = 0; i < PWM_CHANNEL_NUM; i ++)
+    {
+        if(u32ChannelMask & (1 << i))
+        {
             *((__IO uint32_t *)((((uint32_t) & ((pwm)->CNR0)) + i * 12))) = 0;
         }
     }
@@ -245,13 +249,13 @@ void PWM_Stop(PWM_T *pwm, uint32_t u32ChannelMask)
 void PWM_ForceStop(PWM_T *pwm, uint32_t u32ChannelMask)
 {
     uint32_t u32Mask = 0, i;
-
-    for (i = 0; i < PWM_CHANNEL_NUM; i ++) {
-        if (u32ChannelMask & (1 << i)) {
+    for(i = 0; i < PWM_CHANNEL_NUM; i ++)
+    {
+        if(u32ChannelMask & (1 << i))
+        {
             u32Mask |= (PWM_PCR_CH0EN_Msk << (i * 8));
         }
     }
-
     (pwm)->PCR &= ~u32Mask;
 }
 
@@ -319,17 +323,20 @@ uint32_t PWM_GetADCTriggerFlag(PWM_T *pwm, uint32_t u32ChannelNum)
 void PWM_EnableCapture(PWM_T *pwm, uint32_t u32ChannelMask)
 {
     uint32_t i;
-
-    for (i = 0; i < PWM_CHANNEL_NUM; i ++) {
-        if (u32ChannelMask & (1 << i)) {
-            if (i < 2) {
+    for(i = 0; i < PWM_CHANNEL_NUM; i ++)
+    {
+        if(u32ChannelMask & (1 << i))
+        {
+            if(i < 2)
+            {
                 (pwm)->CCR0 |= PWM_CCR0_CAPCH0EN_Msk << (i * 16);
-            } else {
+            }
+            else
+            {
                 (pwm)->CCR2 |= PWM_CCR2_CAPCH2EN_Msk << ((i - 2) * 16);
             }
         }
     }
-
     (pwm)->CAPENR |= u32ChannelMask;
 }
 
@@ -345,17 +352,20 @@ void PWM_EnableCapture(PWM_T *pwm, uint32_t u32ChannelMask)
 void PWM_DisableCapture(PWM_T *pwm, uint32_t u32ChannelMask)
 {
     uint32_t i;
-
-    for (i = 0; i < PWM_CHANNEL_NUM; i ++) {
-        if (u32ChannelMask & (1 << i)) {
-            if (i < 2) {
+    for(i = 0; i < PWM_CHANNEL_NUM; i ++)
+    {
+        if(u32ChannelMask & (1 << i))
+        {
+            if(i < 2)
+            {
                 (pwm)->CCR0 &= ~(PWM_CCR0_CAPCH0EN_Msk << (i * 16));
-            } else {
+            }
+            else
+            {
                 (pwm)->CCR2 &= ~(PWM_CCR2_CAPCH2EN_Msk << ((i - 2) * 16));
             }
         }
     }
-
     (pwm)->CAPENR &= ~u32ChannelMask;
 }
 
@@ -400,9 +410,10 @@ void PWM_DisableOutput(PWM_T *pwm, uint32_t u32ChannelMask)
 void PWM_EnablePDMA(PWM_T *pwm, uint32_t u32ChannelMask, uint32_t u32RisingFirst)
 {
     uint32_t i;
-
-    for (i = 0; i < PWM_CHANNEL_NUM; i ++) {
-        if (u32ChannelMask & (1 << i)) {
+    for(i = 0; i < PWM_CHANNEL_NUM; i ++)
+    {
+        if(u32ChannelMask & (1 << i))
+        {
             (pwm)->CAPPDMACTL = ((pwm)->CAPPDMACTL & ~(PWM_CAPPDMACTL_CAP0RFORDER_Msk << (i * 8))) | \
                                 (((u32RisingFirst << PWM_CAPPDMACTL_CAP0RFORDER_Pos) | \
                                   PWM_CAPPDMACTL_CAP0PDMAMOD_Msk | PWM_CAPPDMACTL_CAP0PDMAEN_Msk) << (i * 8));
@@ -422,9 +433,10 @@ void PWM_EnablePDMA(PWM_T *pwm, uint32_t u32ChannelMask, uint32_t u32RisingFirst
 void PWM_DisablePDMA(PWM_T *pwm, uint32_t u32ChannelMask)
 {
     uint32_t i;
-
-    for (i = 0; i < PWM_CHANNEL_NUM; i ++) {
-        if (u32ChannelMask & (1 << i)) {
+    for(i = 0; i < PWM_CHANNEL_NUM; i ++)
+    {
+        if(u32ChannelMask & (1 << i))
+        {
             (pwm)->CAPPDMACTL &= ~(PWM_CAPPDMACTL_CAP0PDMAEN_Msk << (i * 8));
         }
     }
@@ -479,11 +491,11 @@ void PWM_DisableDeadZone(PWM_T *pwm, uint32_t u32ChannelNum)
  */
 void PWM_EnableCaptureInt(PWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32Edge)
 {
-    if (u32ChannelNum < 2) {
+    if(u32ChannelNum < 2)
         (pwm)->CCR0 |= u32Edge << (u32ChannelNum * 16);
-    } else {
+    else
         (pwm)->CCR2 |= u32Edge << ((u32ChannelNum - 2) * 16);
-    }
+
 }
 
 /**
@@ -499,11 +511,10 @@ void PWM_EnableCaptureInt(PWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32Edge)
  */
 void PWM_DisableCaptureInt(PWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32Edge)
 {
-    if (u32ChannelNum < 2) {
+    if(u32ChannelNum < 2)
         (pwm)->CCR0 &= ~(u32Edge << (u32ChannelNum * 16));
-    } else {
+    else
         (pwm)->CCR2 &= ~(u32Edge << ((u32ChannelNum - 2) * 16));
-    }
 }
 
 /**
@@ -520,11 +531,10 @@ void PWM_DisableCaptureInt(PWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32Edge)
 void PWM_ClearCaptureIntFlag(PWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32Edge)
 {
     //clear capture interrupt flag, and clear CRLR or CFLR latched indicator
-    if (u32ChannelNum < 2) {
+    if(u32ChannelNum < 2)
         (pwm)->CCR0 = ((pwm)->CCR0 & PWM_CCR_MASK) | (PWM_CCR0_CAPIF0_Msk << (u32ChannelNum * 16)) | (u32Edge << (u32ChannelNum * 16 + 5));
-    } else {
+    else
         (pwm)->CCR2 = ((pwm)->CCR2 & PWM_CCR_MASK) | (PWM_CCR2_CAPIF2_Msk << ((u32ChannelNum - 2) * 16)) | (u32Edge << ((u32ChannelNum - 2) * 16 + 5));
-    }
 }
 
 /**
@@ -540,11 +550,15 @@ void PWM_ClearCaptureIntFlag(PWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32Edg
  */
 uint32_t PWM_GetCaptureIntFlag(PWM_T *pwm, uint32_t u32ChannelNum)
 {
-    if (u32ChannelNum < 2) {
+    if(u32ChannelNum < 2)
+    {
         return (((pwm)->CCR0 & ((PWM_CCR0_CRLRI0_Msk | PWM_CCR0_CFLRI0_Msk) << (u32ChannelNum * 16))) >> (PWM_CCR0_CRLRI0_Pos + u32ChannelNum * 16));
-    } else {
+    }
+    else
+    {
         return (((pwm)->CCR2 & ((PWM_CCR2_CRLRI2_Msk | PWM_CCR2_CFLRI2_Msk) << ((u32ChannelNum - 2) * 16))) >> (PWM_CCR2_CRLRI2_Pos + (u32ChannelNum - 2) * 16));
     }
+
 }
 /**
  * @brief Enable duty interrupt of selected channel

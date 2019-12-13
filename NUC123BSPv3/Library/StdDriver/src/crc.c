@@ -50,8 +50,10 @@ void CRC_Open(uint32_t u32Mode, uint32_t u32Attribute, uint32_t u32Seed, uint32_
 {
     /* Enable CRC channel clock */
     PDMA_GCR->GCRCSR |= PDMA_GCRCSR_CRC_CLK_EN_Msk;
+
     CRC->SEED = u32Seed;
     CRC->CTL = u32Mode | u32Attribute | u32DataLen | CRC_CTL_CRCCEN_Msk;
+
     /* Setting RST bit will reload the initial seed value (CRC_SEED register) */
     CRC->CTL |= CRC_CTL_CRC_RST_Msk;
 }
@@ -84,7 +86,8 @@ void CRC_StartDMATransfer(uint32_t u32SrcAddr, uint32_t u32ByteCount)
   */
 uint32_t CRC_GetChecksum(void)
 {
-    switch (CRC->CTL & CRC_CTL_CRC_MODE_Msk) {
+    switch(CRC->CTL & CRC_CTL_CRC_MODE_Msk)
+    {
         case CRC_CCITT:
         case CRC_16:
             return (CRC->CHECKSUM & 0xFFFF);

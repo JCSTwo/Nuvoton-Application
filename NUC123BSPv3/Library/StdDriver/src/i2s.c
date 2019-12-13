@@ -33,9 +33,11 @@
 static uint32_t I2S_GetSourceClockFreq(I2S_T *i2s)
 {
     uint32_t u32Freq, u32ClkSrcSel;
+
     u32ClkSrcSel = CLK->CLKSEL2 & CLK_CLKSEL2_I2S_S_Msk;
 
-    switch (u32ClkSrcSel) {
+    switch(u32ClkSrcSel)
+    {
         case CLK_CLKSEL2_I2S_S_HXT:
             u32Freq = __HXT;
             break;
@@ -89,22 +91,29 @@ uint32_t I2S_Open(I2S_T *i2s, uint32_t u32MasterSlave, uint32_t u32SampleRate, u
 {
     uint32_t u32Divider;
     uint32_t u32BitRate, u32SrcClk;
+
     /* Reset I2S */
     SYS->IPRSTC2 |= SYS_IPRSTC2_I2S_RST_Msk;
     SYS->IPRSTC2 &= ~SYS_IPRSTC2_I2S_RST_Msk;
+
     /* Configure I2S controller according to input parameters. */
     i2s->CON = u32MasterSlave | u32WordWidth | u32Channels | u32DataFormat | I2S_FIFO_TX_LEVEL_WORD_4 | I2S_FIFO_RX_LEVEL_WORD_4;
+
     /* Get I2S source clock frequency */
     u32SrcClk = I2S_GetSourceClockFreq(i2s);
+
     /* Calculate bit clock rate */
     u32BitRate = u32SampleRate * (((u32WordWidth >> 4) & 0x3) + 1) * 16;
     u32Divider = ((u32SrcClk / u32BitRate) >> 1) - 1;
     i2s->CLKDIV = (i2s->CLKDIV & ~I2S_CLKDIV_BCLK_DIV_Msk) | (u32Divider << 8);
+
     /* Calculate real sample rate */
     u32BitRate = u32SrcClk / ((u32Divider + 1) * 2);
     u32SampleRate = u32BitRate / ((((u32WordWidth >> 4) & 0x3) + 1) * 16);
+
     /* Enable TX, RX and I2S controller */
     i2s->CON |= (I2S_CON_RXEN_Msk | I2S_CON_TXEN_Msk | I2S_CON_I2SEN_Msk);
+
     return u32SampleRate;
 }
 
@@ -173,23 +182,23 @@ uint32_t I2S_EnableMCLK(I2S_T *i2s, uint32_t u32BusClock)
 {
     uint32_t u32Divider;
     uint32_t u32SrcClk, u32Reg;
-    u32SrcClk = I2S_GetSourceClockFreq(i2s);
 
-    if (u32BusClock == u32SrcClk) {
+    u32SrcClk = I2S_GetSourceClockFreq(i2s);
+    if(u32BusClock == u32SrcClk)
         u32Divider = 0;
-    } else {
+    else
         u32Divider = (u32SrcClk / u32BusClock) >> 1;
-    }
 
     i2s->CLKDIV = (i2s->CLKDIV & ~I2S_CLKDIV_MCLK_DIV_Msk) | u32Divider;
+
     i2s->CON |= I2S_CON_MCLKEN_Msk;
+
     u32Reg = i2s->CLKDIV & I2S_CLKDIV_MCLK_DIV_Msk;
 
-    if (u32Reg == 0) {
+    if(u32Reg == 0)
         return u32SrcClk;
-    } else {
+    else
         return ((u32SrcClk >> 1) / u32Reg);
-    }
 }
 
 /**

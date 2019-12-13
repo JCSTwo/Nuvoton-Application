@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "NUC123.h"
 #include "cdc_serial.h"
+#include "HAL_Driver\hal_sys_init.h"
 
 /*--------------------------------------------------------------------------*/
 STR_VCOM_LINE_CODING gLineCoding0 = {115200, 0, 0, 8};   /* Baud rate : 115200    */
@@ -65,43 +66,14 @@ volatile int8_t gi8BulkOutReady1 = 0;
 
 void SYS_Init(void)
 {
-    /* Enable XT1_OUT (PF.0) and XT1_IN (PF.1) */
-    SYS->GPF_MFP |= SYS_GPF_MFP_PF0_XT1_OUT | SYS_GPF_MFP_PF1_XT1_IN;
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init System Clock                                                                                       */
-    /*---------------------------------------------------------------------------------------------------------*/
-    CLK->PWRCON |= (CLK_PWRCON_OSC22M_EN_Msk | CLK_PWRCON_XTL12M_EN_Msk);
-    while (!(CLK->CLKSTATUS & CLK_PWRCON_XTL12M_EN_Msk));
-    CLK->PLLCON = CLK_PLLCON_144MHz_HXT;
-    while (!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
-
-    /* Set core clock */
-    CLK->CLKDIV &= ~CLK_CLKDIV_HCLK_N_Msk;
-    CLK->CLKDIV |= CLK_CLKDIV_HCLK(2);
-    CLK->CLKDIV &= ~CLK_CLKDIV_USB_N_Msk;
-    CLK->CLKDIV |= CLK_CLKDIV_USB(3);
-    CLK->CLKSEL0 &= (~CLK_CLKSEL0_HCLK_S_Msk);
-    CLK->CLKSEL0 |= CLK_CLKSEL0_HCLK_S_PLL;
-
-    /* Enable peripheral clock */
-    CLK->APBCLK |= (CLK_APBCLK_UART0_EN_Msk | CLK_APBCLK_UART1_EN_Msk | CLK_APBCLK_USBD_EN_Msk);
-
-    PllClock        = 144000000;
-    SystemCoreClock = 144000000 / 2;
-    CyclesPerUs     = SystemCoreClock / 1000000;
-
+    SYS_Init_72MHZ_USBD();
     /* Select UART module clock source */
     CLK->CLKSEL1 &= ~CLK_CLKSEL1_UART_S_Msk;
     CLK->CLKSEL1 |= CLK_CLKSEL1_UART_S_HXT;
     CLK->CLKDIV &= ~CLK_CLKDIV_UART_N_Msk;
     CLK->CLKDIV |= CLK_CLKDIV_UART(1);
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init I/O Multi-function                                                                                 */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Set multi-function pins for UART0 and UART1 */
-    SYS->GPB_MFP |= (SYS_GPB_MFP_PB4_UART1_RXD | SYS_GPB_MFP_PB5_UART1_TXD);
-    SYS->GPC_MFP |= (SYS_GPC_MFP_PC4_UART0_RXD | SYS_GPC_MFP_PC5_UART0_TXD);
-    SYS->ALT_MFP |= (SYS_ALT_MFP_PC4_UART0_RXD | SYS_ALT_MFP_PC5_UART0_TXD);
+    SYS_Init_UART0(); // PIN 7, 8 = UART0_RXD, UART0_TXD
+    SYS_Init_UART1(); // PIN 1, 2 = UART1_RXD, UART1_TXD
 }
 
 
@@ -424,6 +396,7 @@ int32_t main(void)
     NVIC_EnableIRQ(UART0_IRQn);
     NVIC_EnableIRQ(UART1_IRQn);
     PB14 = 0; // Green LED ON
+
     while (1) {
         VCOM_TransferData();
     }

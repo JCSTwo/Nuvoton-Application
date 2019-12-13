@@ -54,6 +54,7 @@ void WDT_Open(uint32_t u32TimeoutInterval,
               uint32_t u32EnableWakeup)
 {
     WDT->WTCRALT = u32ResetDelay;
+
     WDT->WTCR = u32TimeoutInterval | WDT_WTCR_WTE_Msk |
                 (u32EnableReset << WDT_WTCR_WTRE_Pos) |
                 (u32EnableWakeup << WDT_WTCR_WTWKE_Pos);

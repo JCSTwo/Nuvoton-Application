@@ -33,9 +33,9 @@
  *                          It could be BIT0 ~ BIT5 and BIT8 ~ BIT13 for PC GPIO port. \n
  *                          It could be BIT0 ~ BIT5 and BIT8 ~ BIT11 for PD GPIO port. \n
  *                          It could be BIT0 ~ BIT3 for PF GPIO port.
- * @param[in]   u32Mode     Operation mode. It could be :
-  *                         - \ref GPIO_PMD_INPUT,
- *                          - \ref GPIO_PMD_OUTPUT,
+ * @param[in]   u32Mode     Operation mode. It could be : 
+  *                         - \ref GPIO_PMD_INPUT, 
+ *                          - \ref GPIO_PMD_OUTPUT, 
  *                          - \ref GPIO_PMD_OPEN_DRAIN,
  *                          - \ref GPIO_PMD_QUASI
  *
@@ -47,8 +47,10 @@ void GPIO_SetMode(GPIO_T *port, uint32_t u32PinMask, uint32_t u32Mode)
 {
     uint32_t i;
 
-    for (i = 0; i < GPIO_PIN_MAX; i++) {
-        if (u32PinMask & (1 << i)) {
+    for(i = 0; i < GPIO_PIN_MAX; i++)
+    {
+        if(u32PinMask & (1 << i))
+        {
             port->PMD = (port->PMD & ~(0x3 << (i << 1))) | (u32Mode << (i << 1));
         }
     }
@@ -64,11 +66,11 @@ void GPIO_SetMode(GPIO_T *port, uint32_t u32PinMask, uint32_t u32Mode)
  *                              It could be 0 ~ 5 and 8 ~ 13 for PC GPIO port. \n
  *                              It could be 0 ~ 5 and 8 ~ 11 for PD GPIO port. \n
  *                              It could be 0 ~ 3 for PF GPIO port.
- * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be :
- *                              - \ref GPIO_INT_RISING
- *                              - \ref GPIO_INT_FALLING
+ * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be : 
+ *                              - \ref GPIO_INT_RISING 
+ *                              - \ref GPIO_INT_FALLING 
  *                              - \ref GPIO_INT_BOTH_EDGE
- *                              - \ref GPIO_INT_HIGH
+ *                              - \ref GPIO_INT_HIGH 
  *                              - \ref GPIO_INT_LOW
  *
  * @return      None
@@ -91,7 +93,7 @@ void GPIO_EnableInt(GPIO_T *port, uint32_t u32Pin, uint32_t u32IntAttribs)
  *                          It could be 0 ~ 10 and 12 ~ 15 for PB GPIO port. \n
  *                          It could be 0 ~ 5 and 8 ~ 13 for PC GPIO port. \n
  *                          It could be 0 ~ 5 and 8 ~ 11 for PD GPIO port. \n
- *                          It could be 0 ~ 3 for PF GPIO port.
+ *                          It could be 0 ~ 3 for PF GPIO port.  
  *
  * @return      None
  *

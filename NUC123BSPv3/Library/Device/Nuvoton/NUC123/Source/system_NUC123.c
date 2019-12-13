@@ -31,24 +31,33 @@ void SystemCoreClockUpdate(void)             /* Get Core Clock Frequency      */
 {
     uint32_t u32Freq, u32ClkSrc;
     uint32_t u32HclkDiv;
+
     /* Update PLL Clock */
     PllClock = CLK_GetPLLClockFreq();
+
     u32ClkSrc = CLK->CLKSEL0 & CLK_CLKSEL0_HCLK_S_Msk;
 
-    if (u32ClkSrc == CLK_CLKSEL0_HCLK_S_PLL) {
+    if(u32ClkSrc == CLK_CLKSEL0_HCLK_S_PLL)
+    {
         /* Use PLL clock */
         u32Freq = PllClock;
-    } else if (u32ClkSrc == CLK_CLKSEL0_HCLK_S_PLL_DIV2) {
+    }
+    else if(u32ClkSrc == CLK_CLKSEL0_HCLK_S_PLL_DIV2)
+    {
         /* Use PLL/2 clock */
         u32Freq = PllClock >> 1;
-    } else {
+    }
+    else
+    {
         /* Use the clock sources directly */
         u32Freq = gau32ClkSrcTbl[u32ClkSrc];
     }
 
     u32HclkDiv = (CLK->CLKDIV & CLK_CLKDIV_HCLK_N_Msk) + 1;
+
     /* Update System Core Clock */
     SystemCoreClock = u32Freq / u32HclkDiv;
+
     CyclesPerUs = (SystemCoreClock + 500000) / 1000000;
 }
 

@@ -322,28 +322,28 @@ __STATIC_INLINE uint32_t CLK_GetPLLClockFreq(void)
     uint32_t u32PllFreq = 0, u32PllReg;
     uint32_t u32FIN, u32NF, u32NR, u32NO;
     uint8_t au8NoTbl[4] = {1, 2, 2, 4};
+
     u32PllReg = CLK->PLLCON;
 
-    if (u32PllReg & (CLK_PLLCON_PD_Msk | CLK_PLLCON_OE_Msk)) {
-        return 0;    /* PLL is in power down mode or fix low */
-    }
+    if(u32PllReg & (CLK_PLLCON_PD_Msk | CLK_PLLCON_OE_Msk))
+        return 0;           /* PLL is in power down mode or fix low */
 
-    if (u32PllReg & CLK_PLLCON_PLL_SRC_HIRC) {
+    if(u32PllReg & CLK_PLLCON_PLL_SRC_HIRC)
         u32FIN = __HIRC;    /* PLL source clock from HIRC */
-    } else {
-        u32FIN = __HXT;    /* PLL source clock from HXT */
-    }
+    else
+        u32FIN = __HXT;     /* PLL source clock from HXT */
 
-    if (u32PllReg & CLK_PLLCON_BP_Msk) {
-        return u32FIN;    /* PLL is in bypass mode */
-    }
+    if(u32PllReg & CLK_PLLCON_BP_Msk)
+        return u32FIN;      /* PLL is in bypass mode */
 
     /* PLL is output enabled in normal work mode */
     u32NO = au8NoTbl[((u32PllReg & CLK_PLLCON_OUT_DV_Msk) >> CLK_PLLCON_OUT_DV_Pos)];
     u32NF = ((u32PllReg & CLK_PLLCON_FB_DV_Msk) >> CLK_PLLCON_FB_DV_Pos) + 2;
     u32NR = ((u32PllReg & CLK_PLLCON_IN_DV_Msk) >> CLK_PLLCON_IN_DV_Pos) + 2;
+
     /* u32FIN is shifted 2 bits to avoid overflow */
     u32PllFreq = (((u32FIN >> 2) * u32NF) / (u32NR * u32NO) << 2);
+
     return u32PllFreq;
 }
 
@@ -364,15 +364,15 @@ __STATIC_INLINE void CLK_SysTickDelay(uint32_t us)
     SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
 
     /* Waiting for down-count to zero */
-    while ((SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) == 0);
-
+    while((SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) == 0);
+    
     /* Disable SysTick counter */
-    SysTick->CTRL = 0;
+    SysTick->CTRL = 0;    
 }
 
 /**
   * @brief      This function execute long delay function.
-  * @param[in]  us  Delay time.
+  * @param[in]  us  Delay time. 
   * @return     None
   * @details    Use the SysTick to generate the long delay time and the UNIT is in us.
   *             The SysTick clock source is from HCLK, i.e the same as system core clock.
@@ -381,27 +381,34 @@ __STATIC_INLINE void CLK_SysTickDelay(uint32_t us)
 __STATIC_INLINE void CLK_SysTickLongDelay(uint32_t us)
 {
     uint32_t delay;
+        
     /* It should <= 233016us for each delay loop */
     delay = 233016L;
 
-    do {
-        if (us > delay) {
+    do
+    {
+        if(us > delay)
+        {
             us -= delay;
-        } else {
+        }
+        else
+        {
             delay = us;
             us = 0UL;
-        }
-
+        }        
+        
         SysTick->LOAD = delay * CyclesPerUs;
         SysTick->VAL  = (0x0UL);
         SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
 
         /* Waiting for down-count to zero */
-        while ((SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) == 0UL);
+        while((SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) == 0UL);
 
         /* Disable SysTick counter */
         SysTick->CTRL = 0UL;
-    } while (us > 0UL);
+    
+    }while(us > 0UL);
+    
 }
 
 

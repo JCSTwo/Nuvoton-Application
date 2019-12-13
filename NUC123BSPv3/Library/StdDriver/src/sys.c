@@ -145,6 +145,7 @@ void SYS_ResetModule(uint32_t u32ModuleIndex)
 {
     /* Generate reset signal to the corresponding module */
     *(volatile uint32_t *)((uint32_t)&SYS->IPRSTC1 + (u32ModuleIndex >> 24)) |= 1 << (u32ModuleIndex & 0x00ffffff);
+
     /* Release corresponding module from reset state */
     *(volatile uint32_t *)((uint32_t)&SYS->IPRSTC1 + (u32ModuleIndex >> 24)) &= ~(1 << (u32ModuleIndex & 0x00ffffff));
 }
@@ -168,8 +169,10 @@ void SYS_EnableBOD(int32_t i32Mode, uint32_t u32BODLevel)
 {
     /* Enable Brown-out Detector function */
     SYS->BODCR |= SYS_BODCR_BOD_EN_Msk;
+
     /* Enable Brown-out interrupt or reset function */
     SYS->BODCR = (SYS->BODCR & ~SYS_BODCR_BOD_RSTEN_Msk) | i32Mode;
+
     /* Select Brown-out Detector threshold voltage */
     SYS->BODCR = (SYS->BODCR & ~SYS_BODCR_BOD_VL_Msk) | u32BODLevel;
 }

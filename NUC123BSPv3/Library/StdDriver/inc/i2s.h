@@ -94,11 +94,10 @@ extern "C"
   */
 static __INLINE void I2S_ENABLE_TX_ZCD(I2S_T *i2s, uint32_t u32ChMask)
 {
-    if (u32ChMask == I2S_RIGHT) {
+    if(u32ChMask == I2S_RIGHT)
         i2s->CON |= I2S_CON_RCHZCEN_Msk;
-    } else {
+    else
         i2s->CON |= I2S_CON_LCHZCEN_Msk;
-    }
 }
 
 /**
@@ -112,11 +111,10 @@ static __INLINE void I2S_ENABLE_TX_ZCD(I2S_T *i2s, uint32_t u32ChMask)
   */
 static __INLINE void I2S_DISABLE_TX_ZCD(I2S_T *i2s, uint32_t u32ChMask)
 {
-    if (u32ChMask == I2S_RIGHT) {
+    if(u32ChMask == I2S_RIGHT)
         i2s->CON &= ~I2S_CON_RCHZCEN_Msk;
-    } else {
+    else
         i2s->CON &= ~I2S_CON_LCHZCEN_Msk;
-    }
 }
 
 /**

@@ -252,7 +252,7 @@ extern "C"
  *
  * @details     Disable I/O DOUT mask of specified GPIO pin.
  */
-#define GPIO_DISABLE_DOUT_MASK(port, u32PinMask)    ((port)->DMASK &= ~(u32PinMask))
+#define GPIO_DISABLE_DOUT_MASK(port, u32PinMask)    ((port)->DMASK &= ~(u32PinMask))    
 
 /**
  * @brief       Enable I/O DOUT mask
@@ -292,10 +292,10 @@ extern "C"
 /**
  * @brief       Set De-bounce Sampling Cycle Time
  *
- * @param[in]   u32ClkSrc   The de-bounce counter clock source. It could be :
+ * @param[in]   u32ClkSrc   The de-bounce counter clock source. It could be : 
  *                          - \ref GPIO_DBCLKSRC_HCLK
  *                          - \ref GPIO_DBCLKSRC_LIRC
- * @param[in]   u32ClkSel   The de-bounce sampling cycle selection. It could be :
+ * @param[in]   u32ClkSel   The de-bounce sampling cycle selection. It could be : 
  *                          - \ref GPIO_DBCLKSEL_1
  *                          - \ref GPIO_DBCLKSEL_2
  *                          - \ref GPIO_DBCLKSEL_4
@@ -311,7 +311,7 @@ extern "C"
  *                          - \ref GPIO_DBCLKSEL_4096
  *                          - \ref GPIO_DBCLKSEL_8192
  *                          - \ref GPIO_DBCLKSEL_16384
- *                          - \ref GPIO_DBCLKSEL_32768
+ *                          - \ref GPIO_DBCLKSEL_32768 
  *
  * @return      None
  *
@@ -368,10 +368,10 @@ extern "C"
  *                              It could be 0 ~ 5 and 8 ~ 11 for PD GPIO port.  \n
  *                              It could be 0 ~ 3 for PF GPIO port.
  * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be \n
- *                              - \ref GPIO_INT_RISING
- *                              - \ref GPIO_INT_FALLING
+ *                              - \ref GPIO_INT_RISING 
+ *                              - \ref GPIO_INT_FALLING 
  *                              - \ref GPIO_INT_BOTH_EDGE
- *                              - \ref GPIO_INT_HIGH
+ *                              - \ref GPIO_INT_HIGH 
  *                              - \ref GPIO_INT_LOW
  *
  * @return      None
