@@ -10,10 +10,9 @@
  *
  ******************************************************************************/
 #include <stdio.h>
-#include "NUC123.h"
+#include "..\targetdev.h"
 
-#define PLLCON_SETTING  CLK_PLLCON_72MHz_HXT
-#define PLL_CLOCK       72000000
+#define printf VCOM_printf
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* Global variables                                                                                        */
@@ -99,7 +98,7 @@ void I2C_MasterRx(uint32_t u32Status)
         g_u8MstEndFlag = 1;
     } else {
         /* TO DO */
-        printf("Status 0x%x is NOT processed\n", u32Status);
+        printf("Status 0x%x is NOT processed\r\n", u32Status);
     }
 }
 
@@ -126,7 +125,7 @@ void I2C_MasterTx(uint32_t u32Status)
         }
     } else {
         /* TO DO */
-        printf("Status 0x%x is NOT processed\n", u32Status);
+        printf("Status 0x%x is NOT processed\r\n", u32Status);
     }
 }
 
@@ -180,70 +179,15 @@ void I2C_SlaveTRx(uint32_t u32Status)
         I2C_SET_CONTROL_REG(I2C1, I2C_I2CON_SI_AA);
     } else {
         /* TO DO */
-        printf("Status 0x%x is NOT processed\n", u32Status);
+        printf("Status 0x%x is NOT processed\r\n", u32Status);
     }
 }
 
 void SYS_Init(void)
 {
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init System Clock                                                                                       */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Enable XT1_OUT (PF0) and XT1_IN (PF1) */
-    SYS->GPF_MFP |= SYS_GPF_MFP_PF0_XT1_OUT | SYS_GPF_MFP_PF1_XT1_IN;
-    /* Enable Internal RC 22.1184MHz clock */
-    /* Enable external XTAL 12MHz clock */
-    CLK->PWRCON |= (CLK_PWRCON_OSC22M_EN_Msk | CLK_PWRCON_XTL12M_EN_Msk);
-
-    /* Waiting for external XTAL clock ready */
-    while (!(CLK->CLKSTATUS & CLK_PWRCON_XTL12M_EN_Msk));
-
-    /* Set core clock as CLK_PLLCON_72MHz_HXT from PLL */
-    CLK->PLLCON = CLK_PLLCON_72MHz_HXT;
-
-    while (!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
-
-    CLK->CLKDIV &= ~CLK_CLKDIV_HCLK_N_Msk;
-    CLK->CLKDIV |= CLK_CLKDIV_HCLK(1);
-    CLK->CLKSEL0 &= (~CLK_CLKSEL0_HCLK_S_Msk);
-    CLK->CLKSEL0 |= CLK_CLKSEL0_HCLK_S_PLL;
-    /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
-    //SystemCoreClockUpdate();
-    PllClock        = PLL_CLOCK;            // PLL
-    SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
-    /* Enable UART & I2C1 module clock */
-    CLK->APBCLK |= (CLK_APBCLK_UART0_EN_Msk | CLK_APBCLK_I2C0_EN_Msk | CLK_APBCLK_I2C1_EN_Msk);
-    /* Select UART module clock source */
-    CLK->CLKSEL1 &= ~CLK_CLKSEL1_UART_S_Msk;
-    CLK->CLKSEL1 |= CLK_CLKSEL1_UART_S_HXT;
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init I/O Multi-function                                                                                 */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Set GPC multi-function pins for UART0 RXD and TXD */
-    SYS->GPC_MFP |= (SYS_GPC_MFP_PC4_UART0_RXD | SYS_GPC_MFP_PC5_UART0_TXD);
-    SYS->ALT_MFP |= (SYS_ALT_MFP_PC4_UART0_RXD | SYS_ALT_MFP_PC5_UART0_TXD);
-    /* Set GPF multi-function pins for I2C0 SDA and SCL */
-    SYS->GPF_MFP |= (SYS_GPF_MFP_PF2_I2C0_SDA | SYS_GPF_MFP_PF3_I2C0_SCL);
-    SYS->ALT_MFP1 &= ~(SYS_ALT_MFP1_PF2_Msk | SYS_ALT_MFP1_PF3_Msk);
-    SYS->ALT_MFP1 |= (SYS_ALT_MFP1_PF2_I2C0_SDA | SYS_ALT_MFP1_PF3_I2C0_SCL);
-    /* Set GPA multi-function pins for I2C1 SDA and SCL */
-    SYS->GPA_MFP |= (SYS_GPA_MFP_PA10_I2C1_SDA | SYS_GPA_MFP_PA11_I2C1_SCL);
-    SYS->ALT_MFP &= ~(SYS_ALT_MFP_PA10_Msk | SYS_ALT_MFP_PA11_Msk);
-}
-
-void UART0_Init(void)
-{
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init UART                                                                                               */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Reset UART IP */
-    SYS->IPRSTC2 |=  SYS_IPRSTC2_UART0_RST_Msk;
-    SYS->IPRSTC2 &= ~SYS_IPRSTC2_UART0_RST_Msk;
-    /* Configure UART0 and set UART0 Baudrate */
-    UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__HXT, 115200);
-    UART0->LCR = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
+    SYS_Init_72MHZ_USBD();
+    SYS_Init_I2C0();
+    SYS_Init_I2C1();
 }
 
 void I2C0_Init(void)
@@ -258,7 +202,7 @@ void I2C0_Init(void)
     u32BusClock = 100000;
     I2C0->I2CLK = (uint32_t)(((SystemCoreClock * 10) / (u32BusClock * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
     /* Get I2C0 Bus Clock */
-    printf("I2C0 clock %d Hz\n", (SystemCoreClock / (((I2C0->I2CLK) + 1) << 2)));
+    printf("I2C0 clock %d Hz\r\n", (SystemCoreClock / (((I2C0->I2CLK) + 1) << 2)));
     /* Set I2C0 4 Slave Addresses */
     /* Slave Address : 0x15 */
     I2C0->I2CADDR0 = (I2C0->I2CADDR0 & ~I2C_I2CADDR_I2CADDR_Msk) | (0x15 << I2C_I2CADDR_I2CADDR_Pos);
@@ -285,7 +229,7 @@ void I2C1_Init(void)
     u32BusClock = 100000;
     I2C1->I2CLK = (uint32_t)(((SystemCoreClock * 10) / (u32BusClock * 4) + 5) / 10 - 1); /* Compute proper divider for I2C clock */
     /* Get I2C1 Bus Clock */
-    printf("I2C1 clock %d Hz\n", (SystemCoreClock / (((I2C1->I2CLK) + 1) << 2)));
+    printf("I2C1 clock %d Hz\r\n", (SystemCoreClock / (((I2C1->I2CLK) + 1) << 2)));
     /* Set I2C1 4 Slave Addresses */
     /* Slave Address : 0x16 */
     I2C1->I2CADDR0 = (I2C1->I2CADDR0 & ~I2C_I2CADDR_I2CADDR_Msk) | (0x16 << I2C_I2CADDR_I2CADDR_Pos);
@@ -360,12 +304,12 @@ int32_t Read_Write_SLAVE(uint8_t slvaddr)
 
         /* Compare data */
         if (g_u8MstRxData != g_au8MstTxData[2]) {
-            printf("I2C Byte Write/Read Failed, Data 0x%x\n", g_u8MstRxData);
+            printf("I2C Byte Write/Read Failed, Data 0x%x\r\n", g_u8MstRxData);
             return -1;
         }
     }
 
-    printf("Master Access Slave (0x%X) Test OK\n", slvaddr);
+    printf("Master Access Slave (0x%X) Test OK\r\n", slvaddr);
     return 0;
 }
 
@@ -375,28 +319,24 @@ int32_t Read_Write_SLAVE(uint8_t slvaddr)
 int32_t main(void)
 {
     uint32_t i;
+    volatile uint8_t j = 0;
     /* Unlock protected registers */
     SYS_UnlockReg();
     /* Init System, IP clock and multi-function I/O */
     SYS_Init();
-    /* Lock protected registers */
-    SYS_LockReg();
-    /* Init UART0 for printf */
-    UART0_Init();
-    /*
-        This sample code sets I2C bus clock to 100kHz. Then, Master accesses Slave with Byte Write
-        and Byte Read operations, and check if the read data is equal to the programmed data.
-    */
+    VCOM_Initialize();
+    VCOM_getchar();
     printf("\n");
-    printf("+-------------------------------------------------------+\n");
-    printf("| I2C Driver Sample Code(Slave) for access Slave        |\n");
-    printf("|                                                       |\n");
-    printf("| I2C Master (I2C0) <---> I2C Slave(I2C1)               |\n");
-    printf("+-------------------------------------------------------+\n");
-    printf("Configure I2C0 as a Master, I2C1 as a Mlave.\n");
-    printf("The I/O connection I2C0 and I2C1:\n");
-    printf("I2C0_SDA(PF.2), I2C0_SCL(PF.3)\n");
-    printf("I2C1_SDA(PA.10), I2C1_SCL(PA.11)\n");
+    printf("\r +-------------------------------------------------------+\n");
+    printf("\r | I2C Driver Sample Code(Slave) for access Slave        |\n");
+    printf("\r |                                                       |\n");
+    printf("\r | I2C Master (I2C0) <---> I2C Slave(I2C1)               |\n");
+    printf("\r +-------------------------------------------------------+\n");
+    printf("\r Configure I2C0 as a Master, I2C1 as a Mlave.\n");
+    printf("\r The I/O connection I2C0 and I2C1:\n");
+    printf("\r I2C0_SDA (Pin4), I2C0_SCL (Pin5)\n");
+    printf("\r I2C1_SDA (Pin2), I2C1_SCL (Pin1)\n");
+    printf("\r GND      (Pin3), DVDD     (Pin6)\n");
     /* Init I2C0, I2C1 */
     I2C0_Init();
     I2C1_Init();
@@ -407,31 +347,33 @@ int32_t main(void)
         g_au8SlvData[i] = 0;
     }
 
+_main_loop:
     /* I2C function to Slave receive/transmit data */
     s_I2C1HandlerFn = I2C_SlaveTRx;
-    printf("\n");
-    printf("I2C Slave Mode is Running.\n");
+    printf("\r\n");
+    printf("[%03d] I2C Slave Mode is Running.\r\n", j++);
     /* Access Slave with no address mask */
-    printf("\n");
-    printf(" == No Mask Address ==\n");
+    printf("\r\n");
+    printf(" == No Mask Address ==\r\n");
     Read_Write_SLAVE(0x16);
     Read_Write_SLAVE(0x36);
     Read_Write_SLAVE(0x56);
     Read_Write_SLAVE(0x76);
-    printf("SLAVE Address test OK.\n");
+    printf("SLAVE Address test OK.\r\n");
     /* Access Slave with address mask */
-    printf("\n");
-    printf(" == Mask Address ==\n");
+    printf("\r\n");
+    printf(" == Mask Address ==\r\n");
     Read_Write_SLAVE(0x16 & ~0x04);
     Read_Write_SLAVE(0x36 & ~0x02);
     Read_Write_SLAVE(0x56 & ~0x04);
     Read_Write_SLAVE(0x76 & ~0x02);
-    printf("SLAVE Address Mask test OK.\n");
+    printf("SLAVE Address Mask test OK.\r\n");
     s_I2C0HandlerFn = NULL;
+    VCOM_getchar();
+    goto _main_loop;
     /* Close I2C0, I2C1 */
     I2C0_Close();
     I2C1_Close();
 
-    SendChar_ToUART(0);
     while (1);
 }

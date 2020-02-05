@@ -11,7 +11,9 @@
  * Copyright (C) 2014~2015 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #include <stdio.h>
-#include "NUC123.h"
+#include "..\targetdev.h"
+
+#define printf VCOM_printf
 
 #define TEST_COUNT             64
 
@@ -20,7 +22,6 @@ uint32_t g_au32DestinationData[TEST_COUNT];
 
 /* Function prototype declaration */
 void SYS_Init(void);
-void UART1_Init(void);
 void SPI_Init(void);
 
 /* ------------- */
@@ -29,27 +30,28 @@ void SPI_Init(void);
 int main(void)
 {
     uint32_t u32DataCount, u32TestCount, u32Err;
+    volatile uint8_t i = 0;
     /* Unlock protected registers */
     SYS_UnlockReg();
     /* Init System, IP clock and multi-function I/O */
     SYS_Init();
-    /* Lock protected registers */
-    SYS_LockReg();
-    /* Init UART1 for printf */
-    UART1_Init();
+    VCOM_Initialize();
     /* Init SPI */
     SPI_Init();
-    printf("\n\n");
-    printf("+--------------------------------------------------------------------+\n");
-    printf("|                   NUC123 SPI Driver Sample Code                    |\n");
-    printf("+--------------------------------------------------------------------+\n");
-    printf("\n");
-    printf("\nThis sample code demonstrates SPI0 self loop back data transfer.\n");
-    printf(" SPI0 configuration:\n");
-    printf("     Master mode; data width 32 bits.\n");
-    printf(" I/O connection:\n");
-    printf("     PC.3 SPI0_MOSI0 <--> PC.2 SPI0_MISO0 \n");
-    printf("\nSPI0 Loopback test ");
+    VCOM_getchar();
+    printf("\r\n\n");
+    printf("\r+--------------------------------------------------------------------+\n");
+    printf("\r|                   NUC123 SPI Driver Sample Code                    |\n");
+    printf("\r+--------------------------------------------------------------------+\n");
+    printf("\r\n");
+    printf("\r\nThis sample code demonstrates SPI0 self loop back data transfer.\n");
+    printf("\r SPI0 configuration:\n");
+    printf("\r     Master mode; data width 32 bits.\n");
+    printf("\r I/O connection:\n");
+    printf("\r     Pin7 SPI0_MOSI0 <--> Pin8 SPI0_MISO0 \n");
+    printf("\r GND (Pin3), DVDD (Pin6)\n");
+_main_loop:
+    printf("\r\n[%03d] SPI0 Loopback test ", i++);
     u32Err = 0;
 
     for (u32TestCount = 0; u32TestCount < 0x1000; u32TestCount++) {
@@ -62,7 +64,7 @@ int main(void)
         u32DataCount = 0;
 
         if ((u32TestCount & 0x1FF) == 0) {
-            putchar('.');
+            printf(".");
         }
 
         while (1) {
@@ -96,59 +98,23 @@ int main(void)
     }
 
     if (u32Err) {
-        printf(" [FAIL]\n\n");
+        printf(" [FAIL]\r\n\n");
     } else {
-        printf(" [PASS]\n\n");
+        printf(" [PASS]\r\n\n");
     }
 
+    VCOM_getchar();
+    goto _main_loop;
     /* Disable SPI0 peripheral clock */
     CLK->APBCLK &= (~CLK_APBCLK_SPI0_EN_Msk);
-    SendChar_ToUART(0);
+
     while (1);
 }
 
 void SYS_Init(void)
 {
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init System Clock                                                                                       */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Enable XT1_OUT (PF0) and XT1_IN (PF1) */
-    SYS->GPF_MFP |= SYS_GPF_MFP_PF0_XT1_OUT | SYS_GPF_MFP_PF1_XT1_IN;
-    /* Enable external 12 MHz XTAL */
-    CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
-
-    /* Waiting for clock ready */
-    while (!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk));
-
-    /* Select HXT as the clock source of HCLK */
-    CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HXT;
-    /* Select HXT as the clock source of UART; select HCLK as the clock source of SPI0. */
-    CLK->CLKSEL1 = (CLK->CLKSEL1 & (~(CLK_CLKSEL1_UART_S_Msk | CLK_CLKSEL1_SPI0_S_Msk))) | (CLK_CLKSEL1_UART_S_HXT | CLK_CLKSEL1_SPI0_S_HCLK);
-    /* Enable UART and SPI0 clock */
-    CLK->APBCLK = CLK_APBCLK_UART1_EN_Msk | CLK_APBCLK_SPI0_EN_Msk;
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init I/O Multi-function                                                                                 */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Set PB multi-function pins for UART1 RXD and TXD */
-    SYS->GPB_MFP = SYS_GPB_MFP_PB4_UART1_RXD | SYS_GPB_MFP_PB5_UART1_TXD;
-    SYS->ALT_MFP &= ~(SYS_ALT_MFP_PB4_Msk | SYS_ALT_MFP_PB5_Msk);
-    /* Setup SPI0 multi-function pins */
-    SYS->GPC_MFP = SYS_GPC_MFP_PC0_SPI0_SS0 | SYS_GPC_MFP_PC1_SPI0_CLK | SYS_GPC_MFP_PC2_SPI0_MISO0 | SYS_GPC_MFP_PC3_SPI0_MOSI0;
-    SYS->ALT_MFP = SYS_ALT_MFP_PC0_SPI0_SS0 | SYS_ALT_MFP_PC1_SPI0_CLK | SYS_ALT_MFP_PC2_SPI0_MISO0 | SYS_ALT_MFP_PC3_SPI0_MOSI0;
-    /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and CyclesPerUs automatically. */
-    SystemCoreClockUpdate();
-}
-
-void UART1_Init(void)
-{
-    /* Word length is 8 bits; 1 stop bit; no parity bit. */
-    UART1->LCR = UART_LCR_WLS_Msk;
-    /* Using mode 2 calculation: UART bit rate = UART peripheral clock rate / (BRD setting + 2) */
-    /* UART peripheral clock rate 12 MHz; UART bit rate 115200 bps. */
-    /* 12000000 / 115200 bps ~= 104 */
-    /* 104 - 2 = 0x66. */
-    UART1->BAUD = UART_BAUD_DIV_X_EN_Msk | UART_BAUD_DIV_X_ONE_Msk | (0x66);
+    SYS_Init_72MHZ_USBD();
+    SYS_Init_SPI0();
 }
 
 void SPI_Init(void)
