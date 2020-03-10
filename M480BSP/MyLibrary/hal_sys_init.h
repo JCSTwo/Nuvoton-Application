@@ -1,6 +1,10 @@
 #ifndef __HAL_SYS_INIT_H__
 #define __HAL_SYS_INIT_H__
 
+
+// Nu-Link2 (M48SKIDAE)
+// LDROM: 4K, APROM:512K, SPROM:4K, SRAM:160K
+
 // Nuvoton MCU Peripheral Access Layer Header File
 #include "M480.h"
 
@@ -37,6 +41,7 @@ __STATIC_INLINE void SYS_Init_192MHZ(void)
 
 
 #define nRTSPin						(PE12)
+#define RECEIVE_MODE			(0)
 #define REVEIVE_MODE			(0)
 #define TRANSMIT_MODE			(1)
 
@@ -66,6 +71,8 @@ __STATIC_INLINE void SYS_Init_UART2(void)
     /* Set GPE multi-function pins for UART2 RXD and TXD */
     SYS->GPE_MFPH = (SYS->GPE_MFPH & ~(SYS_GPE_MFPH_PE8MFP_Msk | SYS_GPE_MFPH_PE9MFP_Msk))
                     | (SYS_GPE_MFPH_PE8MFP_UART2_TXD | SYS_GPE_MFPH_PE9MFP_UART2_RXD);
+    // Pin 2, Enable pull up of UART2_RXD pin to solve floating issue
+    GPIO_SETPUSEL(PE, 9, GPIO_PUSEL_PULL_UP);
 }
 
 // PIN 3, 4 = USCI0_CLK, USCI0_DAT0
