@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>RS232_Bridge</TargetName>
+      <TargetName>RS485_Bridge</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
@@ -47,7 +47,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\obj\</OutputDirectory>
-          <OutputName>NuBridge2_RS232_Bridge</OutputName>
+          <OutputName>NuBridge2_RS485_Bridge</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -439,17 +439,17 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\RS232_Bridge\main.c</FilePath>
+              <FilePath>..\RS485_Bridge\main.c</FilePath>
             </File>
             <File>
               <FileName>descriptors.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\RS232_Bridge\descriptors.c</FilePath>
+              <FilePath>..\RS485_Bridge\descriptors.c</FilePath>
             </File>
             <File>
               <FileName>vcom_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\RS232_Bridge\vcom_serial.c</FilePath>
+              <FilePath>..\RS485_Bridge\vcom_serial.c</FilePath>
             </File>
           </Files>
         </Group>

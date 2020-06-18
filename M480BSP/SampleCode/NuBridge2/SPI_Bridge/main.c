@@ -22,7 +22,6 @@ void SYS_Init(void)
 {
     SYS_Init_192MHZ();
     SYS_Init_HSUSBD();
-    SYS_Init_UI2C0();
     SYS_Init_LED(1, 1, 1, 1);
 }
 

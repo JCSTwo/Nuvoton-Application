@@ -11,23 +11,7 @@
 #include "NuMicro.h"
 #include "vcom_serial.h"
 
-extern volatile uint8_t comTbuf[];
-
-__STATIC_INLINE void VCOM_BulkOut(void)
-{
-    __IO uint32_t i, IrqSt;
-    IrqSt = HSUSBD->EP[EPB].EPINTSTS & HSUSBD->EP[EPB].EPINTEN;
-    gu32RxSize = HSUSBD->EP[EPB].EPDATCNT & 0xffff;
-
-    for (i = 0; i < gu32RxSize; i++) {
-        comTbuf[comTtail++] = HSUSBD->EP[EPB].EPDAT_BYTE;
-    }
-
-    comTbytes += gu32RxSize;
-    /* Set a flag to indicate bulk out ready */
-    gi8BulkOutReady = 1;
-    HSUSBD_CLR_EP_INT_FLAG(EPB, IrqSt);
-}
+extern void VCOM_BulkOut(void);
 
 /*--------------------------------------------------------------------------*/
 void USBD20_IRQHandler(void)
@@ -402,3 +386,82 @@ void VCOM_ClassRequest(void)
         }
     }
 }
+
+
+void VCOM_LineCoding(uint8_t port)
+{
+    uint32_t u32Reg;
+    uint32_t u32Baud_Div;
+
+    if (port == 0) {
+        NVIC_DisableIRQ(UART1_IRQn);
+        // Reset software fifo
+        comRbytes = 0;
+        comRhead = 0;
+        comRtail = 0;
+        comTbytes = 0;
+        comThead = 0;
+        comTtail = 0;
+        // Reset hardware fifo
+        UART1->FIFO = 0x3;
+        // Set baudrate
+        u32Baud_Div = UART_BAUD_MODE2_DIVIDER(__HXT, gLineCoding.u32DTERate);
+
+        if (u32Baud_Div > 0xFFFF) {
+            UART1->BAUD = (UART_BAUD_MODE0 | UART_BAUD_MODE0_DIVIDER(__HXT, gLineCoding.u32DTERate));
+        } else {
+            UART1->BAUD = (UART_BAUD_MODE2 | u32Baud_Div);
+        }
+
+        // Set parity
+        if (gLineCoding.u8ParityType == 0) {
+            u32Reg = 0;    // none parity
+        } else if (gLineCoding.u8ParityType == 1) {
+            u32Reg = 0x08;    // odd parity
+        } else if (gLineCoding.u8ParityType == 2) {
+            u32Reg = 0x18;    // even parity
+        } else {
+            u32Reg = 0;
+        }
+
+        // bit width
+        switch (gLineCoding.u8DataBits) {
+            case 5:
+                u32Reg |= 0;
+                break;
+
+            case 6:
+                u32Reg |= 1;
+                break;
+
+            case 7:
+                u32Reg |= 2;
+                break;
+
+            case 8:
+                u32Reg |= 3;
+                break;
+
+            default:
+                break;
+        }
+
+        // stop bit
+        if (gLineCoding.u8CharFormat > 0) {
+            u32Reg |= 0x4;    // 2 or 1.5 bits
+        }
+
+        UART1->LINE = u32Reg;
+        // Re-enable UART interrupt
+        UART1->FIFO = UART_FIFO_RFITL_14BYTES | UART_FIFO_RTSTRGLV_14BYTES;
+        UART1->TOUT = (UART1->TOUT & ~UART_TOUT_TOIC_Msk) | (10);
+        NVIC_EnableIRQ(UART1_IRQn);
+        UART1->INTEN = (UART_INTEN_TOCNTEN_Msk | UART_INTEN_RXTOIEN_Msk | UART_INTEN_RDAIEN_Msk);
+    }
+}
+
+
+
+
+
+

@@ -2,8 +2,8 @@
 #include "NuMicro.h"
 #include "vcom_serial.h"
 
-// .\obj\NL2_RS232_Bridge.axf: Error: L6218E: Undefined symbol CLK_GetPCLK0Freq (referred from usci_i2c.o).
-// .\obj\NL2_RS232_Bridge.axf: Error: L6218E: Undefined symbol CLK_GetPCLK1Freq (referred from usci_i2c.o).
+// Error: L6218E: Undefined symbol CLK_GetPCLK0Freq (referred from usci_i2c.o).
+// Error: L6218E: Undefined symbol CLK_GetPCLK1Freq (referred from usci_i2c.o).
 
 __weak uint32_t CLK_GetPCLK0Freq()
 {
@@ -26,38 +26,6 @@ STR_VCOM_LINE_CODING gLineCoding = {115200, 0, 0, 8};   /* Baud rate : 115200   
 /* parity       */
 /* data bits    */
 uint16_t gCtrlSignal = 0;     /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Request To Send) */
-
-
-STR_VCOM_LINE_CODING ngLineCoding = {115200, 0, 0, 8};   /* Baud rate : 115200    */
-uint16_t ngCtrlSignal = 0;     /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Request To Send) */
-
-volatile uint8_t ngIndex = 0;
-
-void MonitorCdcState()
-{
-    /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Request To Send) */
-    if ((gCtrlSignal & BIT0) == 0) {
-        return;
-    }
-
-    // Only u32DTERate & u8CharFormat are used by I2C.
-    if (gLineCoding.u32DTERate != ngLineCoding.u32DTERate) {
-        printf("\r\n[%02X]u32DTERate %d -> %d", ngIndex++, ngLineCoding.u32DTERate, gLineCoding.u32DTERate);
-        ngLineCoding.u32DTERate = gLineCoding.u32DTERate;
-    }
-
-    if (gLineCoding.u8CharFormat != ngLineCoding.u8CharFormat) {
-        printf("\r\n[%02X]u8CharFormat %d -> %d", ngIndex++, ngLineCoding.u8CharFormat, gLineCoding.u8CharFormat);
-        ngLineCoding.u8CharFormat = gLineCoding.u8CharFormat;
-    }
-
-    //
-
-    if (gCtrlSignal != ngCtrlSignal) {
-        printf("\r\n[%02X]gCtrlSignal %d -> %d", ngIndex++, ngCtrlSignal, gCtrlSignal);
-        ngCtrlSignal = gCtrlSignal;
-    }
-}
 
 /*--------------------------------------------------------------------------*/
 
@@ -161,9 +129,6 @@ void I2C_Bridge_Init(uint32_t u32Mode, uint32_t u32BusClock)
     }
 }
 
-// UART2_IRQHandler - for I2C Monitor mode only
-// main.c
-
 void USCI0_IRQHandler(void)
 {
     uint32_t u32Status;
@@ -196,20 +161,26 @@ void USCI0_IRQHandler(void)
     monRshorts++;
 }
 
+
+static STR_VCOM_LINE_CODING lLineCoding = {0, 0, 0, 0};
+
 // vcom_serial.c
 void VCOM_LineCoding(uint8_t port)
 {
-    uint32_t u32BusClock;
-    uint32_t u32Mode;
+    __IO uint32_t u32BusClock, u32Mode;
 
     /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Request To Send) */
     if ((gCtrlSignal & BIT0) == 0) {
         return;
     }
 
-    if (port == 0) {
-        u32BusClock = gLineCoding.u32DTERate;
-        u32Mode = gLineCoding.u8CharFormat;
+    u32BusClock = gLineCoding.u32DTERate;
+    u32Mode = gLineCoding.u8CharFormat;
+
+    // when host change gCtrlSignal, it will also set gLineCoding again.
+    if ((lLineCoding.u32DTERate != u32BusClock) || (lLineCoding.u8CharFormat != u32Mode)) {
+        lLineCoding.u32DTERate = u32BusClock;
+        lLineCoding.u8CharFormat = u32Mode;
         // Reset software fifo
         comRbytes = 0;
         comRhead = 0;
@@ -226,87 +197,101 @@ void VCOM_LineCoding(uint8_t port)
     }
 }
 
-#if 1
+static uint8_t u8SlaveAddr;
+static uint16_t u16rwLen;
+
 void VCOM_TransferData(void)
 {
-    MonitorCdcState();
+    int32_t i, i32Len;
 
-    if (monRshorts) {
-        uint8_t ch;
-        uint16_t _monRshorts = monRshorts, i, data;
+    /* Check if any data to send to USB & USB is ready to send them out */
+    if (monRshorts && (gu32TxSize == 0)) {
+        uint16_t u16Data;
+        i32Len = monRshorts * 2;
 
-        for (i = 0; i < _monRshorts; i++) {
-            data = monRbuf[monRhead++];
+        if (i32Len > (HSUSBD->EP[EPA].EPMPS & HSUSBD_EPMPS_EPMPS_Msk)) {
+            i32Len = (HSUSBD->EP[EPA].EPMPS & HSUSBD_EPMPS_EPMPS_Msk);
+        }
 
-            if (data == 0x5300) {
-                // printf("\nS ");
-                printf("\r\n(I2C) S ");
-            } else 	if (data == 0x5000) {
-                printf("P");
-            } else {
-                ch = (data >> 8);
-                printf("%02X ", (data & 0xFF));
-
-                // printf("%c ", ch);
-                if (ch == 'N') {
-                    printf("%c ", ch);
-                }
-            }
-
+        for (i = 0; i < i32Len; i += 2) {
+            u16Data = monRbuf[monRhead++];
+            HSUSBD->EP[EPA].EPDAT_BYTE = (u16Data >> 8);
+            HSUSBD->EP[EPA].EPDAT_BYTE = (u16Data & 0x00FF);
             monRhead &= MONBUFMASK;
         }
 
         NVIC_DisableIRQ(USCI0_IRQn);
-
-        if (monRshorts) {
-            monRshorts -= _monRshorts;
-            NVIC_EnableIRQ(USCI0_IRQn);
-        }
-    } else if (comTbytes && ((gCtrlSignal & 0x03) == 0x03)) {
-        uint8_t *data;
-        uint8_t u8SlaveAddr = comTbuf[0];
+        monRshorts -= (i32Len >> 1);
+        NVIC_EnableIRQ(USCI0_IRQn);
+        gu32TxSize = i32Len;
+        HSUSBD->EP[EPA].EPRSPCTL = HSUSBD_EP_RSPCTL_SHORTTXEN;    // packet end
+        HSUSBD->EP[EPA].EPTXCNT = i32Len;
+        HSUSBD_ENABLE_EP_INT(EPA, HSUSBD_EPINTEN_TXPKIEN_Msk);
+    } else if (comTbytes && ((gCtrlSignal & 0x03) == 0x01)) {
+        uint8_t *pu8Data;
+        u8SlaveAddr = comTbuf[0];
         UI2C0->PROTCTL |=  UI2C_PROTCTL_PROTEN_Msk;
 
-        if (u8SlaveAddr & BIT7) {
-            uint16_t u16rLen = inps(comTbuf + 2);
-            data = (uint8_t *)comRbuf;
+        if (u8SlaveAddr & BIT7) { // i2c read
+            u16rwLen = inps(comTbuf + 2);
+            pu8Data = (uint8_t *)comRbuf;
             u8SlaveAddr &= 0x7F; // Slave address(7-bit)
-            comRbytes = UI2C_ReadMultiBytes(UI2C0, u8SlaveAddr, data, u16rLen);
-        } else {
-            uint16_t u16wLen = (comTbytes - 2); // [BYTE0 BYTE1: I2C Address], [BYTE2 ~ ...: Payload]
-            data = (uint8_t *)(comTbuf + 2);
-            comRbytes = UI2C_WriteMultiBytes(UI2C0, u8SlaveAddr, data, u16wLen);
+
+            if (1 == u16rwLen) {
+                pu8Data[0] = UI2C_ReadByte(UI2C0, u8SlaveAddr);
+                comRbytes = 1;
+            } else {
+                comRbytes = UI2C_ReadMultiBytes(UI2C0, u8SlaveAddr, pu8Data, u16rwLen);
+            }
+        } else { // i2c write
+            u16rwLen = (comTbytes - 2); // [BYTE0 BYTE1: I2C Address], [BYTE2 ~ ...: Payload]
+            pu8Data = (uint8_t *)(comTbuf + 2);
+
+            if (1 == u16rwLen) {
+                if (0 == UI2C_WriteByte(UI2C0, u8SlaveAddr, pu8Data[0])) {
+                    comRbytes = 1;
+                } else {
+                    comRbytes = 0;
+                }
+            } else {
+                comRbytes = UI2C_WriteMultiBytes(UI2C0, u8SlaveAddr, pu8Data, u16rwLen);
+            }
+
+            if (comRbytes == u16rwLen) {
+                comRbuf[0] = 'O';
+                comRbuf[1] = 'K';
+            } else {
+                comRbuf[0] = 'N';
+                comRbuf[1] = 'G';
+            }
+
+            comRbytes = 2;
         }
 
         UI2C0->PROTCTL &= ~UI2C_PROTCTL_PROTEN_Msk;
+        NVIC_DisableIRQ(USBD20_IRQn);
         comTbytes = 0;
+        comTtail = 0; //reset index
+        NVIC_EnableIRQ(USBD20_IRQn);
 
-        if (comRbytes) {
-            uint8_t ch;
-            uint16_t i = 0;
-            printf("\r\n");
+        while (comRbytes && (comTbytes == 0)) {
+            while ((HSUSBD->EP[EPA].EPINTSTS & HSUSBD_EPINTSTS_BUFEMPTYIF_Msk) == 0);
 
-            for (i = 0; i < comRbytes; i++) {
-                ch = data[i];
-                printf("%02X ", ch);
+            i32Len = comRbytes;
+
+            if (i32Len > (HSUSBD->EP[EPA].EPMPS & HSUSBD_EPMPS_EPMPS_Msk)) {
+                i32Len = (HSUSBD->EP[EPA].EPMPS & HSUSBD_EPMPS_EPMPS_Msk);
             }
 
-            comRbytes = 0;
+            for (i = 0; i < i32Len; i++) {
+                HSUSBD->EP[EPA].EPDAT_BYTE = comRbuf[i];
+            }
+
+            gu32TxSize = i32Len;
+            HSUSBD->EP[EPA].EPRSPCTL = HSUSBD_EP_RSPCTL_SHORTTXEN;    // packet end
+            HSUSBD->EP[EPA].EPTXCNT = i32Len;
+            HSUSBD_ENABLE_EP_INT(EPA, HSUSBD_EPINTEN_TXPKIEN_Msk);
+            comRbytes -= i32Len;
         }
     }
 }
-#else // Test code here
-void VCOM_TransferData(void)
-{
-    NVIC_DisableIRQ(USCI0_IRQn);
-    // UI2C_Close(UI2C0);
-    UI2C0->CTL &= ~UI2C_CTL_FUNMODE_Msk;
-    /* Open USCI_I2C0 and set clock to 100k */
-    UI2C0_Open(400000);
-    UI2C0->PROTCTL  = (UI2C0->PROTCTL & ~UI2C_PROTCTL_GCFUNC_Msk) | UI2C_GCMODE_DISABLE;
-    /* Enable UI2C0 protocol interrupt */
-    UI2C_ENABLE_PROT_INT(UI2C0, (UI2C_PROTIEN_ACKIEN_Msk | UI2C_PROTIEN_NACKIEN_Msk | UI2C_PROTIEN_STORIEN_Msk | UI2C_PROTIEN_STARIEN_Msk));
-
-    while (1);
-}
-#endif

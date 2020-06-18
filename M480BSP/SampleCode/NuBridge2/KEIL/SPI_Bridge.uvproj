@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>RS232_Bridge</TargetName>
+      <TargetName>SPI_Bridge</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
@@ -47,7 +47,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\obj\</OutputDirectory>
-          <OutputName>NuBridge2_RS232_Bridge</OutputName>
+          <OutputName>NuBridge2_SPI_Bridge</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -437,19 +437,24 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\RS232_Bridge\main.c</FilePath>
-            </File>
-            <File>
               <FileName>descriptors.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\RS232_Bridge\descriptors.c</FilePath>
+              <FilePath>..\SPI_Bridge\descriptors.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SPI_Bridge\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_bridge.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SPI_Bridge\spi_bridge.c</FilePath>
             </File>
             <File>
               <FileName>vcom_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\RS232_Bridge\vcom_serial.c</FilePath>
+              <FilePath>..\SPI_Bridge\vcom_serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -460,6 +465,11 @@
               <FileName>hsusbd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Library\StdDriver\src\hsusbd.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Library\StdDriver\src\spi.c</FilePath>
             </File>
           </Files>
         </Group>

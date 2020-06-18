@@ -90,7 +90,6 @@ void EPB_Handler(void);
 void VCOM_LineCoding(uint8_t port);
 void VCOM_TransferData(void);
 
-
 #endif  /* __USBD_CDC_H_ */
 
 /*** (C) COPYRIGHT 2016 Nuvoton Technology Corp. ***/

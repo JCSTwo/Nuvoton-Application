@@ -11,23 +11,19 @@
 #include "NuMicro.h"
 #include "vcom_serial.h"
 
-extern volatile uint8_t comTbuf[];
+/*--------------------------------------------------------------------------*/
+STR_VCOM_LINE_CODING gLineCoding = {115200, 0, 0, 8};   /* Baud rate : 115200    */
+/* Stop bit     */
+/* parity       */
+/* data bits    */
+uint16_t gCtrlSignal = 0;     /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Request To Send) */
 
-__STATIC_INLINE void VCOM_BulkOut(void)
-{
-    __IO uint32_t i, IrqSt;
-    IrqSt = HSUSBD->EP[EPB].EPINTSTS & HSUSBD->EP[EPB].EPINTEN;
-    gu32RxSize = HSUSBD->EP[EPB].EPDATCNT & 0xffff;
+uint32_t gu32TxSize = 0;
 
-    for (i = 0; i < gu32RxSize; i++) {
-        comTbuf[comTtail++] = HSUSBD->EP[EPB].EPDAT_BYTE;
-    }
+volatile int8_t gi8BulkOutReady = 0;
 
-    comTbytes += gu32RxSize;
-    /* Set a flag to indicate bulk out ready */
-    gi8BulkOutReady = 1;
-    HSUSBD_CLR_EP_INT_FLAG(EPB, IrqSt);
-}
+extern void VCOM_BulkOut(void);
+
 
 /*--------------------------------------------------------------------------*/
 void USBD20_IRQHandler(void)
@@ -401,4 +397,9 @@ void VCOM_ClassRequest(void)
             }
         }
     }
+}
+
+
+void VCOM_LineCoding(uint8_t port)
+{
 }

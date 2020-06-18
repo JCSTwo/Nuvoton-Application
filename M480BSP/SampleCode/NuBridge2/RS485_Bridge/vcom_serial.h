@@ -69,10 +69,10 @@ typedef struct {
 extern volatile int8_t gi8BulkOutReady;
 extern STR_VCOM_LINE_CODING gLineCoding;
 extern uint16_t gCtrlSignal;
-extern volatile uint16_t comRbytes;
+extern volatile uint32_t comRbytes;
 extern volatile uint16_t comRhead;
 extern volatile uint16_t comRtail;
-extern volatile uint16_t comTbytes;
+extern volatile uint32_t comTbytes;
 extern volatile uint16_t comThead;
 extern volatile uint16_t comTtail;
 extern uint32_t gu32RxSize;
@@ -89,7 +89,6 @@ void EPA_Handler(void);
 void EPB_Handler(void);
 void VCOM_LineCoding(uint8_t port);
 void VCOM_TransferData(void);
-
 
 #endif  /* __USBD_CDC_H_ */
 
