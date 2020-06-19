@@ -41,6 +41,8 @@ void ISP_Bridge_Init(void)
     // Peripheral Init
     SPI1_Init(Pclk0);
     UI2C0_Init(Pclk0, 100000);
+    // !!!! Don't enable I2C protocol. It will affect the I2C bus.
+    UI2C0->PROTCTL &= ~UI2C_PROTCTL_PROTEN_Msk;
     RS485_Init();
     CAN_Init();
     // Init Ready (turn on all LED)
@@ -71,12 +73,14 @@ void ISP_Bridge_Main(void)
 
             case 4:
                 LED_Set(0, 1, 1, 1);
+                UI2C0->PROTCTL |=  UI2C_PROTCTL_PROTEN_Msk;
 
                 if (64 == UI2C_WriteMultiBytes(UI2C0, 0x60, g_lib_CmdBuf, 64)) {
                     g_lib_CmdToTarget = 1;
                 } else {
                 }
 
+                UI2C0->PROTCTL &= ~UI2C_PROTCTL_PROTEN_Msk;
                 break;
 
             case 5:
@@ -134,7 +138,9 @@ void ISP_Bridge_Main(void)
 
                     case 4:
                     default:
+                        UI2C0->PROTCTL |=  UI2C_PROTCTL_PROTEN_Msk;
                         u32rxLen = UI2C_ReadMultiBytes(UI2C0, 0x60, g_lib_AckBuf, 64);
+                        UI2C0->PROTCTL &= ~UI2C_PROTCTL_PROTEN_Msk;
                         break;
                 }
 
