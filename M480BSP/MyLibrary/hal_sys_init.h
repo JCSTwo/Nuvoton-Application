@@ -45,6 +45,11 @@ __STATIC_INLINE void SYS_Init_192MHZ(void)
 #define REVEIVE_MODE			(0)
 #define TRANSMIT_MODE			(1)
 
+// Making Names Less Ambiguous.
+#define Transceiver_Direction_485    (PE12)
+#define DIR_RECEIVE                  (0)
+#define DIR_TRANSMIT                 (1)
+
 #define GPIO_SETMODE(port, pin, u32Mode) port->MODE = (port->MODE & ~(0x3ul << (pin << 1))) | (u32Mode << (pin << 1)); // Pin Indexs
 #define GPIO_SETPUSEL(port, pin, u32Mode) port->PUSEL = (port->PUSEL & ~(0x3ul << (pin << 1))) | (u32Mode << (pin << 1)); // Pin Indexs
 
@@ -174,7 +179,7 @@ __STATIC_INLINE void SYS_Init_RS485(void)
     // SYS_GPE_MFPH_PE12MFP_UART1_nRTS
     // SYS_GPE_MFPH_PE13MFP_UART1_TXD
     PE->MODE = (PE->MODE & ~(0x3ul << (12 << 1))) | (GPIO_MODE_OUTPUT << (12 << 1));
-    nRTSPin = REVEIVE_MODE;
+    Transceiver_Direction_485 = DIR_RECEIVE;
     SYS->GPC_MFPH = (SYS->GPC_MFPH & ~(SYS_GPC_MFPH_PC8MFP_Msk)) | SYS_GPC_MFPH_PC8MFP_UART1_RXD;
     SYS->GPE_MFPH = (SYS->GPE_MFPH & ~(SYS_GPE_MFPH_PE13MFP_Msk)) | SYS_GPE_MFPH_PE13MFP_UART1_TXD;
 }

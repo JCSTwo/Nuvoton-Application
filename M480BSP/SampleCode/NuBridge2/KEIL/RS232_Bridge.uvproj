@@ -444,12 +444,12 @@
             <File>
               <FileName>descriptors.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\RS232_Bridge\descriptors.c</FilePath>
+              <FilePath>..\vcom_serial\descriptors.c</FilePath>
             </File>
             <File>
               <FileName>vcom_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\RS232_Bridge\vcom_serial.c</FilePath>
+              <FilePath>..\vcom_serial\vcom_serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -460,6 +460,11 @@
               <FileName>hsusbd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Library\StdDriver\src\hsusbd.c</FilePath>
+            </File>
+            <File>
+              <FileName>_clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\_clk.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -439,7 +439,7 @@
             <File>
               <FileName>descriptors.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\SPI_Bridge\descriptors.c</FilePath>
+              <FilePath>..\vcom_serial\descriptors.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -447,14 +447,9 @@
               <FilePath>..\SPI_Bridge\main.c</FilePath>
             </File>
             <File>
-              <FileName>spi_bridge.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SPI_Bridge\spi_bridge.c</FilePath>
-            </File>
-            <File>
               <FileName>vcom_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\SPI_Bridge\vcom_serial.c</FilePath>
+              <FilePath>..\vcom_serial\vcom_serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -470,6 +465,11 @@
               <FileName>spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Library\StdDriver\src\spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>_clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\_clk.c</FilePath>
             </File>
           </Files>
         </Group>

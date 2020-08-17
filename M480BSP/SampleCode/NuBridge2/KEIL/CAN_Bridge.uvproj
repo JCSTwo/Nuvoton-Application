@@ -446,6 +446,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Library\StdDriver\src\hsusbd.c</FilePath>
             </File>
+            <File>
+              <FileName>_clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\_clk.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -454,7 +459,7 @@
             <File>
               <FileName>descriptors.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\CAN_Bridge\descriptors.c</FilePath>
+              <FilePath>..\vcom_serial\descriptors.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -464,7 +469,7 @@
             <File>
               <FileName>vcom_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\CAN_Bridge\vcom_serial.c</FilePath>
+              <FilePath>..\vcom_serial\vcom_serial.c</FilePath>
             </File>
           </Files>
         </Group>

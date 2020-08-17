@@ -7,14 +7,8 @@
  ******************************************************************************/
 #include <stdio.h>
 #include "NuMicro.h"
-#include "vcom_serial.h"
+#include "..\vcom_serial\vcom_serial.h"
 #include "hal_sys_init.h"
-
-// Error: L6218E: Undefined symbol CLK_GetPLLClockFreq (referred from system_m480.o).
-uint32_t CLK_GetPLLClockFreq(void)
-{
-    return FREQ_192MHZ;
-}
 
 /*--------------------------------------------------------------------------*/
 STR_VCOM_LINE_CODING gLineCoding = {115200, 0, 0, 8};   /* Baud rate : 115200    */
@@ -58,6 +52,96 @@ uint32_t gu32RxSize = 0;
 uint32_t gu32TxSize = 0;
 
 volatile int8_t gi8BulkOutReady = 0;
+
+
+void VCOM_BulkOut(void)
+{
+    __IO uint32_t i, IrqSt;
+    IrqSt = HSUSBD->EP[EPB].EPINTSTS & HSUSBD->EP[EPB].EPINTEN;
+    gu32RxSize = HSUSBD->EP[EPB].EPDATCNT & 0xffff;
+
+    for (i = 0; i < gu32RxSize; i++) {
+        comTbuf[comTtail++] = HSUSBD->EP[EPB].EPDAT_BYTE;
+    }
+
+    comTbytes += gu32RxSize;
+    /* Set a flag to indicate bulk out ready */
+    gi8BulkOutReady = 1;
+    HSUSBD_CLR_EP_INT_FLAG(EPB, IrqSt);
+}
+
+
+void VCOM_LineCoding(uint8_t port)
+{
+    uint32_t u32Reg;
+    uint32_t u32Baud_Div;
+
+    if (port == 0) {
+        NVIC_DisableIRQ(UART2_IRQn);
+        // Reset software fifo
+        comRbytes = 0;
+        comRhead = 0;
+        comRtail = 0;
+        comTbytes = 0;
+        comThead = 0;
+        comTtail = 0;
+        // Reset hardware fifo
+        UART2->FIFO = 0x3;
+        // Set baudrate
+        u32Baud_Div = UART_BAUD_MODE2_DIVIDER(__HXT, gLineCoding.u32DTERate);
+
+        if (u32Baud_Div > 0xFFFF) {
+            UART2->BAUD = (UART_BAUD_MODE0 | UART_BAUD_MODE0_DIVIDER(__HXT, gLineCoding.u32DTERate));
+        } else {
+            UART2->BAUD = (UART_BAUD_MODE2 | u32Baud_Div);
+        }
+
+        // Set parity
+        if (gLineCoding.u8ParityType == 0) {
+            u32Reg = 0;    // none parity
+        } else if (gLineCoding.u8ParityType == 1) {
+            u32Reg = 0x08;    // odd parity
+        } else if (gLineCoding.u8ParityType == 2) {
+            u32Reg = 0x18;    // even parity
+        } else {
+            u32Reg = 0;
+        }
+
+        // bit width
+        switch (gLineCoding.u8DataBits) {
+            case 5:
+                u32Reg |= 0;
+                break;
+
+            case 6:
+                u32Reg |= 1;
+                break;
+
+            case 7:
+                u32Reg |= 2;
+                break;
+
+            case 8:
+                u32Reg |= 3;
+                break;
+
+            default:
+                break;
+        }
+
+        // stop bit
+        if (gLineCoding.u8CharFormat > 0) {
+            u32Reg |= 0x4;    // 2 or 1.5 bits
+        }
+
+        UART2->LINE = u32Reg;
+        // Re-enable UART interrupt
+        NVIC_EnableIRQ(UART2_IRQn);
+    }
+}
+
+
+
 
 /*--------------------------------------------------------------------------*/
 void SYS_Init(void)

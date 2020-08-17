@@ -437,24 +437,19 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\I2C_Bridge\main.c</FilePath>
-            </File>
-            <File>
               <FileName>descriptors.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\I2C_Bridge\descriptors.c</FilePath>
+              <FilePath>..\vcom_serial\descriptors.c</FilePath>
             </File>
             <File>
               <FileName>vcom_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\I2C_Bridge\vcom_serial.c</FilePath>
+              <FilePath>..\vcom_serial\vcom_serial.c</FilePath>
             </File>
             <File>
-              <FileName>i2c_bridge.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\I2C_Bridge\i2c_bridge.c</FilePath>
+              <FilePath>..\I2C_Bridge\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -470,6 +465,11 @@
               <FileName>usci_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Library\StdDriver\src\usci_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>_clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\MyLibrary\_clk.c</FilePath>
             </File>
           </Files>
         </Group>

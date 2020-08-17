@@ -11,24 +11,6 @@
 #include "NuMicro.h"
 #include "vcom_serial.h"
 
-extern volatile uint8_t comTbuf[];
-
-__STATIC_INLINE void VCOM_BulkOut(void)
-{
-    __IO uint32_t i, IrqSt;
-    IrqSt = HSUSBD->EP[EPB].EPINTSTS & HSUSBD->EP[EPB].EPINTEN;
-    gu32RxSize = HSUSBD->EP[EPB].EPDATCNT & 0xffff;
-
-    for (i = 0; i < gu32RxSize; i++) {
-        comTbuf[comTtail++] = HSUSBD->EP[EPB].EPDAT_BYTE;
-    }
-
-    comTbytes += gu32RxSize;
-    /* Set a flag to indicate bulk out ready */
-    gi8BulkOutReady = 1;
-    HSUSBD_CLR_EP_INT_FLAG(EPB, IrqSt);
-}
-
 /*--------------------------------------------------------------------------*/
 void USBD20_IRQHandler(void)
 {

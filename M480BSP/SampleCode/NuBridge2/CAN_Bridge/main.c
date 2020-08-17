@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include "NuMicro.h"
 #include "hal_sys_init.h"
+#include "..\vcom_serial\vcom_serial.h"
 
-__weak uint32_t CLK_GetPLLClockFreq(void)
-{
-    return FREQ_192MHZ;
-}
+/*--------------------------------------------------------------------------*/
+STR_VCOM_LINE_CODING gLineCoding = {115200, 0, 0, 8};   /* Baud rate : 115200    */
+/* Stop bit     */
+/* parity       */
+/* data bits    */
+uint16_t gCtrlSignal = 0;     /* BIT0: DTR(Data Terminal Ready) , BIT1: RTS(Request To Send) */
+
 
 volatile int8_t gi8CanTxOK = 1;
 
@@ -26,11 +30,10 @@ volatile uint16_t comTbytes = 0;
 volatile uint16_t comThead = 0;
 volatile uint16_t comTtail = 0;
 
+//uint32_t gu32RxSize = 0;
+uint32_t gu32TxSize = 0;
 
-extern uint32_t gu32TxSize; // vcom_serial.h
-
-extern volatile int8_t gi8BulkOutReady;
-
+volatile int8_t gi8BulkOutReady = 0;
 
 void SYS_Init(void)
 {
@@ -57,6 +60,10 @@ void HSUSBD_VCOM_Init(void)
             break;
         }
     }
+}
+
+void VCOM_LineCoding(uint8_t port)
+{
 }
 
 void CAN_STOP(void)
