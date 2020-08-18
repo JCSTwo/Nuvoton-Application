@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>RS485_Bridge</TargetName>
+      <TargetName>NuBridge2</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
@@ -47,7 +47,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\obj\</OutputDirectory>
-          <OutputName>NuBridge2_RS485_Bridge</OutputName>
+          <OutputName>NuBridge2</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -439,7 +439,7 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\RS485_Bridge\main.c</FilePath>
+              <FilePath>..\bridge\main.c</FilePath>
             </File>
             <File>
               <FileName>descriptors.c</FileName>
@@ -465,6 +465,21 @@
               <FileName>_clk.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\MyLibrary\_clk.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>NuBridge2</GroupName>
+          <Files>
+            <File>
+              <FileName>nubridge2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bridge\nubridge2.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart_bridge.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bridge\uart_bridge.c</FilePath>
             </File>
           </Files>
         </Group>

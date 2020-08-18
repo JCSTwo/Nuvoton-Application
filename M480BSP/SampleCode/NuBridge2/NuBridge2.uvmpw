@@ -17,14 +17,6 @@
   </project>
 
   <project>
-    <PathAndName>.\KEIL\RS232_Bridge.uvproj</PathAndName>
-  </project>
-
-  <project>
-    <PathAndName>.\KEIL\RS485_Bridge.uvproj</PathAndName>
-  </project>
-
-  <project>
     <PathAndName>.\KEIL\SPI_Bridge.uvproj</PathAndName>
   </project>
 
