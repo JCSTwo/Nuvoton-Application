@@ -28,5 +28,7 @@ void RS232_LineCoding(void);
 void RS232_TransferData(void);
 void RS485_LineCoding(void);
 void RS485_TransferData(void);
+void RS232Monitor_LineCoding(void);
+void RS232Monitor_TransferData(void);
 
 #endif  /* __NU_BRIDGE2_H__ */

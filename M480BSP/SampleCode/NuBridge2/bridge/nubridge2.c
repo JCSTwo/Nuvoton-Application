@@ -27,7 +27,14 @@ typedef union {
         __IO uint8_t  comRbuf[RXBUFSIZE];
     };
 
-    __IO uint16_t monRbuf[RXBUFSIZE];
+    __IO union {
+        __IO uint16_t _Short;
+        __IO uint8_t  _Byte;
+        struct {
+            __IO uint8_t  _Byte_L;
+            __IO uint8_t  _Byte_H;
+        };
+    } monRbuf[RXBUFSIZE];
 } STACK_Buf;
 
 #if defined ( __CC_ARM   )
