@@ -62,8 +62,6 @@ volatile uint32_t gu32TxSize1 = 0;
 
 volatile int8_t gi8BulkOutReady1 = 0;
 
-
-
 void SYS_Init(void)
 {
     SYS_Init_72MHZ_USBD();
@@ -75,7 +73,6 @@ void SYS_Init(void)
     SYS_Init_UART0(); // PIN 7, 8 = UART0_RXD, UART0_TXD
     SYS_Init_UART1(); // PIN 1, 2 = UART1_RXD, UART1_TXD
 }
-
 
 void UART0_Init(void)
 {
@@ -106,7 +103,6 @@ void UART1_Init(void)
     /* Enable UART Interrupt */
     UART1->IER = UART_IER_RTO_IEN_Msk | UART_IER_RDA_IEN_Msk;
 }
-
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* UART Callback function                                                                                  */
@@ -143,7 +139,7 @@ void UART0_IRQHandler(void)
     }
 
     if (u32IntStatus & UART_ISR_THRE_IF_Msk) {
-        if (comTbytes0) {
+        if (comTbytes0 && (UART0->IER & UART_IER_THRE_IEN_Msk)) {
             /* Fill the Tx FIFO */
             size = comTbytes0;
 
@@ -201,7 +197,7 @@ void UART1_IRQHandler(void)
     }
 
     if (u32IntStatus & UART_ISR_THRE_IF_Msk) {
-        if (comTbytes1) {
+        if (comTbytes1 && (UART1->IER & UART_IER_THRE_IEN_Msk)) {
             /* Fill the Tx FIFO */
             size = comTbytes1;
 
@@ -375,6 +371,33 @@ void VCOM_TransferData(void)
     }
 }
 
+void PowerDown()
+{
+    /* Unlock protected registers */
+    SYS_UnlockReg();
+    // printf("Enter power down ...\n");
+    // while (!IsDebugFifoEmpty());
+    /* Wakeup Enable */
+    USBD_ENABLE_INT(USBD_INTEN_WAKEUP_EN_Msk);
+    // CLK_PowerDown();
+    {
+        /* Set the processor uses deep sleep as its low power mode */
+        SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+        /* Set system Power-down enabled and Power-down entry condition */
+        CLK->PWRCON |= (CLK_PWRCON_PWR_DOWN_EN_Msk | CLK_PWRCON_PD_WAIT_CPU_Msk);
+        /* Chip enter Power-down mode after CPU run WFI instruction */
+        __WFI();
+    }
+
+    /* Clear PWR_DOWN_EN if it is not clear by itself */
+    if (CLK->PWRCON & CLK_PWRCON_PWR_DOWN_EN_Msk) {
+        CLK->PWRCON ^= CLK_PWRCON_PWR_DOWN_EN_Msk;
+    }
+
+    // printf("device wakeup!\n");
+    /* Lock protected registers */
+    SYS_LockReg();
+}
 
 /*---------------------------------------------------------------------------------------------------------*/
 /*  Main Function                                                                                          */
@@ -398,6 +421,11 @@ int32_t main(void)
     PB14 = 0; // Green LED ON
 
     while (1) {
+        /* Enter power down when USB suspend */
+        if (g_u8Suspend) {
+            PowerDown();
+        }
+
         VCOM_TransferData();
     }
 }

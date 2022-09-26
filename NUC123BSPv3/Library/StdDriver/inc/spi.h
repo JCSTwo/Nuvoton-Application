@@ -6,6 +6,7 @@
  * @brief    NUC123 Series SPI Driver Header File
  *
  * @note
+ * SPDX-License-Identifier: Apache-2.0
  * Copyright (C) 2014~2015 Nuvoton Technology Corp. All rights reserved.
  *
  ******************************************************************************/
@@ -159,6 +160,14 @@ extern "C"
   * @details    Set TX_DMA_GO bit of SPI_DMA register to enable TX PDMA transfer function.
   */
 #define SPI_TRIGGER_TX_PDMA(spi)   ((spi)->DMA |= SPI_DMA_TX_DMA_GO_Msk)
+
+/**
+  * @brief      Trigger TX and RX PDMA function.
+  * @param[in]  spi The pointer of the specified SPI module.
+  * @return     None.
+  * @details    Set TX_DMA_GO bit and RX_DMA_GO bit of SPI_DMA register to enable TX and RX PDMA transfer function.
+  */
+#define SPI_TRIGGER_TX_RX_PDMA(spi)   ((spi)->DMA |= (SPI_DMA_TX_DMA_GO_Msk | SPI_DMA_RX_DMA_GO_Msk))
 
 /**
   * @brief      Get the count of available data in RX FIFO.

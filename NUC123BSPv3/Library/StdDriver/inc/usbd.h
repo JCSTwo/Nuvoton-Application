@@ -6,8 +6,8 @@
  * @brief    NUC123 series USB driver header file
  *
  * @note
+ * SPDX-License-Identifier: Apache-2.0
  * Copyright (C) 2014~2015 Nuvoton Technology Corp. All rights reserved.
- *
  ******************************************************************************/
 
 #ifndef __USBD_H__
@@ -655,7 +655,7 @@ void USBD_LockEpStall(uint32_t u32EpBitmap);
 
 /*@}*/ /* end of group USBD_Driver */
 
-/*@}*/ /* end of group Standard_Driver */
+/*@}*/ /* end of group Device_Driver */
 
 
 #endif //__USBD_H__

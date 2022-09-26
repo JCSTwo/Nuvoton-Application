@@ -6,6 +6,7 @@
  * @brief    NUC123 Series Debug Port and Semihost Setting Source File
  *
  * @note
+ * SPDX-License-Identifier: Apache-2.0
  * Copyright (C) 2014~2015 Nuvoton Technology Corp. All rights reserved.
  *
  ******************************************************************************/
@@ -435,12 +436,13 @@ void SendChar_ToUART(int ch)
 {
 
     while(DEBUG_PORT->FSR & UART_FSR_TX_FULL_Msk);
-    DEBUG_PORT->DATA = ch;
     if(ch == '\n')
     {
-        while(DEBUG_PORT->FSR & UART_FSR_TX_FULL_Msk);
         DEBUG_PORT->DATA = '\r';
+        while(DEBUG_PORT->FSR & UART_FSR_TX_FULL_Msk);
     }
+
+    DEBUG_PORT->DATA = ch;
 }
 
 #else
@@ -457,14 +459,6 @@ void SendChar_ToUART(int ch)
     if(ch)
     {
         // Push char
-        i32Tmp = i32Head + 1;
-        if(i32Tmp >= BUF_SIZE) i32Tmp = 0;
-        if(i32Tmp != i32Tail)
-        {
-            u8Buf[i32Head] = ch;
-            i32Head = i32Tmp;
-        }
-
         if(ch == '\n')
         {
             i32Tmp = i32Head + 1;
@@ -474,6 +468,14 @@ void SendChar_ToUART(int ch)
                 u8Buf[i32Head] = '\r';
                 i32Head = i32Tmp;
             }
+        }
+
+        i32Tmp = i32Head + 1;
+        if(i32Tmp >= BUF_SIZE) i32Tmp = 0;
+        if(i32Tmp != i32Tail)
+        {
+            u8Buf[i32Head] = ch;
+            i32Head = i32Tmp;
         }
     }
     else
@@ -657,16 +659,18 @@ int _write (int fd, char *ptr, int len)
 {
     int i = len;
 
-    while(i--) {
+    while(i--)
+    {
         while(DEBUG_PORT->FSR & UART_FSR_TX_FULL_Msk);
 
-        DEBUG_PORT->DATA = *ptr++;
-
-        if(*ptr == '\n') {
-            while(DEBUG_PORT->FSR & UART_FSR_TX_FULL_Msk);
+        if(*ptr == '\n')
+        {
             DEBUG_PORT->DATA = '\r';
+            while(DEBUG_PORT->FSR & UART_FSR_TX_FULL_Msk);
         }
-    }
+
+        DEBUG_PORT->DATA = *ptr++;
+	}
     return len;
 }
 
